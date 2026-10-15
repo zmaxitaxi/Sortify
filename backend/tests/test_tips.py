@@ -16,6 +16,25 @@ from backend.app.services.tips_service import (
 client = TestClient(app)
 
 
+def test_short_item_keys_do_not_match_inside_other_words():
+    cupboard = get_disposal_guidance("plastic", "plastic cupboard")
+    bottleneck = get_disposal_guidance("glass", "bottleneck shard")
+    assert cupboard["item_tip"] is None
+    assert bottleneck["item_tip"] is None
+
+
+def test_required_category_tips_match_the_week_4_copy():
+    expected = {
+        "plastic": "Empty liquids and rinse before recycling. Keep caps on.",
+        "compost": "Food scraps, soiled napkins, and BPI-certified compostable packaging only.",
+        "paper": "Keep clean and dry. Flatten cardboard boxes.",
+        "glass": "Rinse jar clean. Metal lids should be separated.",
+        "landfill": "Wrappers, chip bags, and styrofoam cannot be recycled.",
+    }
+    for category, phrase in expected.items():
+        assert get_disposal_tip(category) == phrase
+
+
 def test_item_subtips_differ_for_bottle_cup_and_food_container():
     bottle = get_disposal_tip("plastic", "Plastic Water Bottle")
     cup = get_disposal_tip("plastic", "Iced coffee cup")
@@ -63,6 +82,8 @@ def test_classify_response_includes_compost_tip_for_the_mock_carton():
     assert response.status_code == 200
     body = response.json()
     assert body["category"] == "compost"
+    assert body["location"] == "berkeley"
+    assert "Empty the carton" in body["disposal_tip"]
     assert "BPI-certified" in body["disposal_tip"]
     assert body["disposal_tips"]["action"] == "Compost"
     assert body["disposal_tips"]["bin_type"] == "green"
@@ -78,6 +99,34 @@ def test_tips_file_contract_has_all_five_categories():
         assert entry["action"].strip()
         assert entry["bin_type"].strip()
         assert name
+
+
+def test_classify_normalizes_hyphenated_locations():
+    response = client.post(
+        "/api/classify",
+        files={"file": ("cup.jpg", io.BytesIO(b"\xff\xd8\xff"), "image/jpeg")},
+        params={"location": "San-Francisco"},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["location"] == "san_francisco"
+    assert body["category"] == "compost"
+
+
+def test_classify_returns_500_when_tips_are_unreadable(monkeypatch):
+    def broken(*args, **kwargs):
+        raise TipsDataError("tips.json is corrupt")
+
+    monkeypatch.setattr(
+        "backend.app.routers.classify.get_disposal_guidance",
+        broken,
+    )
+    response = client.post(
+        "/api/classify",
+        files={"file": ("cup.jpg", io.BytesIO(b"\xff\xd8\xff"), "image/jpeg")},
+    )
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Disposal tips are unavailable."
 
 
 def test_broken_tips_file_raises(tmp_path, monkeypatch):

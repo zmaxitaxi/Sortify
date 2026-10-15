@@ -8,7 +8,11 @@ from backend.app.schemas import (
     ClassifyResponse,
     DisposalTip,
 )
-from backend.app.services.tips_service import get_disposal_guidance
+from backend.app.services.tips_service import (
+    TipsDataError,
+    get_disposal_guidance,
+    get_disposal_tip,
+)
 
 router = APIRouter()
 
@@ -57,14 +61,21 @@ def classify_item(
     item_name = "Almond Milk Carton (Scaffold)"
     category = "compost"
     confidence = 0.91
-    guidance = get_disposal_guidance(category, item_name, location)
+    try:
+        guidance = get_disposal_guidance(category, item_name, location)
+        disposal_tip = get_disposal_tip(category, item_name, location)
+    except TipsDataError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Disposal tips are unavailable.",
+        ) from exc
 
     return ClassifyResponse(
         item_name=item_name,
         category=category,
         confidence=confidence,
-        location=location.lower(),
-        disposal_tip=guidance["tip"],
+        location=guidance["location"],
+        disposal_tip=disposal_tip,
         bin_color="Green",
         bin="Green Compost Bin",
         disposal_tips=DisposalTip(

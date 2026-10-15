@@ -1,6 +1,7 @@
 """Category tips and item-specific sub-tips for disposal guidance."""
 
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 
@@ -15,8 +16,11 @@ class TipsDataError(Exception):
 def load_tips() -> dict:
     if not _TIPS_PATH.is_file():
         raise TipsDataError(f"Disposal tips file not found at {_TIPS_PATH}")
-    with _TIPS_PATH.open(encoding="utf-8") as handle:
-        data = json.load(handle)
+    try:
+        with _TIPS_PATH.open(encoding="utf-8") as handle:
+            data = json.load(handle)
+    except json.JSONDecodeError as exc:
+        raise TipsDataError(f"Disposal tips file is not valid JSON: {exc}") from exc
     categories = data.get("categories")
     if not isinstance(categories, dict) or "landfill" not in categories:
         raise TipsDataError("tips.json must define categories, including landfill")
@@ -35,7 +39,13 @@ def _match_item(items: dict, item_name: str | None) -> str | None:
     haystack = item_name.strip().lower()
     if not haystack:
         return None
-    matches = [key for key in items if isinstance(key, str) and key.lower() in haystack]
+    matches = []
+    for key in items:
+        if not isinstance(key, str) or not key.strip():
+            continue
+        pattern = rf"\b{re.escape(key.strip())}\b"
+        if re.search(pattern, haystack, flags=re.IGNORECASE):
+            matches.append(key)
     if not matches:
         return None
     best = max(matches, key=len)
