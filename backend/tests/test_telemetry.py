@@ -61,6 +61,10 @@ def test_log_sink_failure_does_not_change_the_response(monkeypatch):
         "backend.app.middleware.telemetry.logger.info",
         explode,
     )
+    monkeypatch.setattr(
+        "backend.app.middleware.telemetry.logger.exception",
+        explode,
+    )
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}

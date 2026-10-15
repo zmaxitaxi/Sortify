@@ -46,8 +46,11 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
                 status_code,
                 elapsed_ms,
             )
-        except Exception:
-            logger.exception("request log failed")
+        except Exception:  # noqa: BLE001 - a dead log sink must not change the response
+            try:
+                logger.exception("request log failed")
+            except Exception:  # noqa: BLE001
+                return
 
 
 def _elapsed_ms(start: float) -> float:
