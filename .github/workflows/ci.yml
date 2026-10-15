@@ -38,15 +38,15 @@ jobs:
 
       - name: Smart Backend Smoke Test
         run: |
-          if [ -f "backend/main.py" ]; then
-            echo "backend/main.py found! Installing dependencies..."
+          if [ -f "backend/app/main.py" ] || [ -f "backend/main.py" ]; then
+            echo "Backend app found. Installing dependencies..."
             pip install -r requirements.txt
             if find backend/ -name "test_*.py" -o -name "*_test.py" | grep -q .; then
               echo "Running backend test suite..."
-              pytest backend/
+              pytest backend/ -q
             else
               echo "No backend test files found yet — testing app import directly..."
-              python -c "from backend.main import app; print('Backend app imported successfully!')"
+              python -c "from backend.app.main import app; print('Backend app imported successfully!')"
             fi
           else
             echo "backend/main.py not created yet — skipping backend smoke test for now."
