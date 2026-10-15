@@ -1,0 +1,70 @@
+{
+  "categories": {
+    "plastic": {
+      "action": "Recycle",
+      "bin_type": "blue",
+      "tip": "Empty liquids and rinse before recycling. Keep caps on.",
+      "locations": {
+        "berkeley": "Berkeley accepts clean rigid plastics in the blue cart.",
+        "san_francisco": "Rigid plastics #1-7 are accepted in the blue bin; soft plastics go to landfill."
+      },
+      "items": {
+        "bottle": "Empty the bottle, rinse it, and put the cap back on before recycling.",
+        "cup": "Rinse plastic cups. Compost certified compostable cups instead of recycling them.",
+        "food container": "Scrape out food and rinse the container. Recycle only rigid plastic."
+      }
+    },
+    "compost": {
+      "action": "Compost",
+      "bin_type": "green",
+      "tip": "Food scraps, soiled napkins, and BPI-certified compostable packaging only.",
+      "locations": {
+        "berkeley": "Berkeley organics include food scraps and certified compostable packaging."
+      },
+      "items": {
+        "bottle": "Do not compost plastic bottles.",
+        "cup": "Certified compostable cups can go in the green bin. Plastic cups cannot.",
+        "food container": "Compost food-soiled containers only when they are certified compostable.",
+        "carton": "Empty the carton. Compost it only when the package is certified compostable."
+      }
+    },
+    "paper": {
+      "action": "Recycle",
+      "bin_type": "brown",
+      "tip": "Keep clean and dry. Flatten cardboard boxes.",
+      "locations": {
+        "berkeley": "Berkeley recycling takes clean paper and flattened cardboard."
+      },
+      "items": {
+        "cup": "Paper cups with a plastic lining usually belong in landfill unless the city accepts them.",
+        "food container": "Flatten clean paperboard. Food-soiled paper goes to compost."
+      }
+    },
+    "glass": {
+      "action": "Recycle",
+      "bin_type": "teal",
+      "tip": "Rinse jar clean. Metal lids should be separated.",
+      "locations": {
+        "berkeley": "Berkeley accepts empty glass bottles and jars in recycling."
+      },
+      "items": {
+        "bottle": "Rinse the bottle. Recycle the glass and keep non-metal caps out of the bottle.",
+        "cup": "Rinse drinking glasses only if the city accepts them. Lids are usually landfill.",
+        "food container": "Rinse jars. Recycle clean metal lids separately from the glass."
+      }
+    },
+    "landfill": {
+      "action": "Landfill",
+      "bin_type": "gray",
+      "tip": "Wrappers, chip bags, and styrofoam cannot be recycled.",
+      "locations": {
+        "berkeley": "When Berkeley does not list the item, use the gray landfill cart."
+      },
+      "items": {
+        "bottle": "Soft plastic bottles and foam bottles go to landfill.",
+        "cup": "Plastic-lined and styrofoam cups go to landfill.",
+        "food container": "Chip bags and greasy wrappers go to landfill."
+      }
+    }
+  }
+}
