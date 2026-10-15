@@ -8,6 +8,11 @@ from backend.app.schemas import (
     ClassifyResponse,
     DisposalTip,
 )
+from backend.app.services.tips_service import (
+    TipsDataError,
+    get_disposal_guidance,
+    get_disposal_tip,
+)
 
 router = APIRouter()
 
@@ -52,23 +57,31 @@ def classify_item(
             detail=f"Payload too large. File exceeds {settings.MAX_UPLOAD_SIZE_MB}MB limit.",
         )
 
-    # Scaffolding mock classification response (replaced by real model in Week 4)
+    # Category is still the Week 3 mock. Disposal copy comes from the tips engine.
     item_name = "Almond Milk Carton (Scaffold)"
     category = "compost"
     confidence = 0.91
+    try:
+        guidance = get_disposal_guidance(category, item_name, location)
+        disposal_tip = get_disposal_tip(category, item_name, location)
+    except TipsDataError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Disposal tips are unavailable.",
+        ) from exc
 
     return ClassifyResponse(
         item_name=item_name,
         category=category,
         confidence=confidence,
-        location=location.lower(),
-        disposal_tip=f"Accepted in {location.capitalize()} organics cart.",
+        location=guidance["location"],
+        disposal_tip=disposal_tip,
         bin_color="Green",
         bin="Green Compost Bin",
         disposal_tips=DisposalTip(
-            action="Compost",
-            bin_type="green",
-            notes=f"Accepted under {location.capitalize()} organics guidelines.",
+            action=guidance["action"],
+            bin_type=guidance["bin_type"],
+            notes=guidance["notes"],
         ),
         alternatives=[
             ClassificationAlternative(category="paper", confidence=0.06),
