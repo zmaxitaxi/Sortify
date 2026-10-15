@@ -37,7 +37,8 @@ async def store_image_upload(
     max_bytes: int | None = None,
 ) -> dict:
     """Stream an image to disk and return the Week 1 receipt payload."""
-    if not file.content_type or not file.content_type.startswith("image/"):
+    content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
+    if not content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid file type. Image required.",
@@ -77,5 +78,8 @@ async def store_image_upload(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not store upload.",
         ) from exc
+    except Exception:
+        destination.unlink(missing_ok=True)
+        raise
 
     return {"status": "received", "filename": filename, "size_bytes": size}

@@ -45,6 +45,32 @@ def test_upload_image_rejects_non_image(upload_dir):
     assert list(upload_dir.iterdir()) == []
 
 
+def test_upload_image_accepts_mixed_case_content_type(upload_dir):
+    upload = UploadFile(
+        file=io.BytesIO(b"\xff\xd8abc"),
+        filename="photo.jpg",
+        headers=Headers({"content-type": "Image/JPEG"}),
+    )
+    result = asyncio.run(store_image_upload(upload, dest_dir=upload_dir))
+    assert result["filename"] == "photo.jpg"
+    assert (upload_dir / "photo.jpg").read_bytes() == b"\xff\xd8abc"
+
+
+def test_upload_image_removes_partial_file_when_read_fails(upload_dir):
+    class BrokenStream(io.BytesIO):
+        def read(self, *args, **kwargs):
+            raise RuntimeError("client reset")
+
+    upload = UploadFile(
+        file=BrokenStream(b"\xff\xd8abc"),
+        filename="photo.jpg",
+        headers=Headers({"content-type": "image/jpeg"}),
+    )
+    with pytest.raises(RuntimeError, match="client reset"):
+        asyncio.run(store_image_upload(upload, dest_dir=upload_dir))
+    assert not (upload_dir / "photo.jpg").exists()
+
+
 def test_upload_image_rejects_missing_content_type(upload_dir):
     upload = UploadFile(
         file=io.BytesIO(b"\xff\xd8"),
