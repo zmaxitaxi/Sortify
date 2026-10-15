@@ -69,6 +69,39 @@ def test_get_user_scans_respects_limit_and_rejects_unbounded_reads():
         service.get_user_scans("user-1", limit=101)
 
 
+def test_save_scan_rejects_non_dict_and_naive_timestamp():
+    db = FakeDB()
+    service = FirestoreService(db)
+    with pytest.raises(ValueError, match="scan_data"):
+        service.save_scan("user-1", ["paper"])
+    with pytest.raises(ValueError, match="timezone"):
+        service.save_scan(
+            "user-1",
+            {
+                "predicted_category": "paper",
+                "item_name": "Box",
+                "confidence": 0.4,
+                "timestamp": datetime(2026, 10, 15, 12, 0),
+            },
+        )
+    assert db.docs == {}
+
+
+def test_save_scan_normalizes_zulu_timestamps():
+    service = FirestoreService(FakeDB())
+    service.save_scan(
+        "user-1",
+        {
+            "predicted_category": "glass",
+            "item_name": "Jar",
+            "confidence": 0.7,
+            "timestamp": "2026-10-15T18:30:00Z",
+        },
+    )
+    stored = service.get_user_scans("user-1")
+    assert stored[0]["timestamp"] == "2026-10-15T18:30:00+00:00"
+
+
 def test_save_scan_rejects_invalid_payload_without_writing():
     db = FakeDB()
     service = FirestoreService(db)

@@ -32,7 +32,9 @@ class FirestoreService:
         """Write one scan under users/{user_id}/scans and return its id."""
         if not isinstance(user_id, str) or not user_id.strip():
             raise ValueError("user_id is required")
-        payload = dict(scan_data or {})
+        if not isinstance(scan_data, dict):
+            raise ValueError("scan_data must be a dict")  # noqa: TRY004
+        payload = dict(scan_data)
         payload["user_id"] = user_id.strip()
         payload = validate_scan_document(payload, default_timestamp=True)
         try:
