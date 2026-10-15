@@ -51,9 +51,13 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"mode": "dry-run", **records}, indent=2))
         return 0
 
-    from backend.app.services.firebase import get_db
+    try:
+        from backend.app.services.firebase import get_db
 
-    written = write_seed_records(get_db(), records)
+        written = write_seed_records(get_db(), records)
+    except Exception as exc:  # noqa: BLE001 - any Admin SDK failure should exit non-zero
+        print(f"Firestore seed write failed: {exc}", file=sys.stderr)
+        return 1
     print(
         "Firestore seed write complete "
         f"user={written['user_id']} scan={written['scan_id']}"

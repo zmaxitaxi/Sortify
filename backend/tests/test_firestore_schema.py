@@ -1,8 +1,10 @@
 """Week 2 Firestore document contract and seed writer."""
 
+import importlib.util
 import json
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -44,6 +46,10 @@ def test_scan_document_rejects_unknown_category_and_confidence():
         validate_scan_document({**base, "confidence": 1.2})
     with pytest.raises(ValueError, match="timestamp"):
         validate_scan_document({**base, "timestamp": ""})
+    with pytest.raises(ValueError, match="ISO-8601"):
+        validate_scan_document({**base, "timestamp": "yesterday"})
+    with pytest.raises(ValueError, match="timezone"):
+        validate_scan_document({**base, "timestamp": "2026-10-15T12:00:00"})
 
 
 def test_write_seed_records_hits_user_subcollection_and_flat_scans():
@@ -85,6 +91,28 @@ def test_init_firestore_dry_run_without_credentials():
     assert payload["mode"] == "dry-run"
     assert payload["user"]["current_streak"] == 0
     assert payload["scan"]["item_name"] == "Water Bottle"
+
+
+def _load_init_script():
+    path = Path("backend/scripts/init_firestore.py")
+    spec = importlib.util.spec_from_file_location("init_firestore_under_test", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_init_firestore_live_write_failure_exits_1(monkeypatch, tmp_path):
+    key = tmp_path / "serviceAccountKey.json"
+    key.write_text("{}")
+    monkeypatch.setenv("FIREBASE_CREDENTIALS_PATH", str(key))
+
+    from backend.app.services import firebase
+
+    def boom():
+        raise RuntimeError("project unreachable")
+
+    monkeypatch.setattr(firebase, "get_db", boom)
+    assert _load_init_script().main(["--live"]) == 1
 
 
 def test_init_firestore_live_flag_fails_without_credentials():

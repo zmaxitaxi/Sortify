@@ -85,15 +85,28 @@ def _confidence(value: object) -> float:
     return round(confidence, 4)
 
 
+def _parse_timestamp(value: str) -> datetime:
+    text = value.strip()
+    if text.endswith("Z"):
+        text = f"{text[:-1]}+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError as exc:
+        raise ValueError("timestamp must be an ISO-8601 datetime") from exc
+    if parsed.tzinfo is None:
+        raise ValueError("timestamp must include a timezone")
+    return parsed
+
+
 def _timestamp(value: object) -> str:
     if value is None:
         return datetime.now(UTC).isoformat()
     if isinstance(value, datetime):
         if value.tzinfo is None:
-            value = value.replace(tzinfo=UTC)
+            raise ValueError("timestamp must include a timezone")
         return value.isoformat()
     if isinstance(value, str) and value.strip():
-        return value.strip()
+        return _parse_timestamp(value).isoformat()
     raise ValueError("timestamp must be a datetime or ISO-8601 string")
 
 
