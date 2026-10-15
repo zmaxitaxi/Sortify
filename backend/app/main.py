@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core.config import settings
+from backend.app.middleware.telemetry import TelemetryMiddleware
 from backend.app.routers import auth, classify, history, rules, uploads
 
 app = FastAPI(
@@ -22,6 +23,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Added last so this timer wraps CORS and the routers.
+app.add_middleware(TelemetryMiddleware)
 
 # Week 1 learning route stays at /upload-image, outside the /api prefix.
 app.include_router(uploads.router, tags=["Uploads"])
