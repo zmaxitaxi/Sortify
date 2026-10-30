@@ -2,7 +2,13 @@
 
 Personal branch: `feat/ml/max/domain-gap` in [zmaxitaxi/Sortify](https://github.com/zmaxitaxi/Sortify).
 Team repository: [BoppingNoodles/Sortify](https://github.com/BoppingNoodles/Sortify).
-Narrative reviewed: **October 28, 2026 (America/Los_Angeles)**.
+Narrative reviewed: **October 29, 2026 (America/Los_Angeles)**.
+
+## Latest PR status — October 29
+
+- PRs [#52](https://github.com/BoppingNoodles/Sortify/pull/52) (quantization) and [#53](https://github.com/BoppingNoodles/Sortify/pull/53) (guest history) were merged on October 28 (Los Angeles time). Their older pending-review notes below describe the earlier development state.
+- At Max's request, [PR #54](https://github.com/BoppingNoodles/Sortify/pull/54) was closed **without merging** on October 29. It proposed 53 commits / 58 files from the fork's personal `feat/ml/max/domain-gap` branch into the team's old branch of the same name and included `context.md`. It was not a clean feature PR. Keep this personal branch for context and do not reopen that PR or merge it into team branches. The branch was retained.
+- The automatic snapshot below records the last sync; refresh it with the normal sync workflow before relying on its older open/closed PR states.
 
 ## Working agreement
 
