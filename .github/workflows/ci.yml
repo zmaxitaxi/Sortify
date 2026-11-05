@@ -56,7 +56,7 @@ jobs:
         run: |
           if find ml -name 'test_*.py' | grep -q .; then
             echo "Installing dependencies for ML contract tests..."
-            pip install -r requirements.txt
+            pip install -r requirements.txt -r ml/requirements-onnx.txt
             pytest ml/tests -q
           else
             echo "No ML tests yet."

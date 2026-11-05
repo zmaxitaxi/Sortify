@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "architecture": "mobilenet_v2",
+  "source_checkpoint": "mobilenet_v2.pth",
+  "source_checkpoint_sha256": "54df0a06150bd004608dd39431b092348da17954b40a3fc3d7ec488406762d0e",
+  "class_names": [
+    "compost",
+    "glass",
+    "landfill",
+    "paper",
+    "plastic"
+  ],
+  "preprocessing": {
+    "resize_short_edge": 256,
+    "center_crop": [
+      224,
+      224
+    ],
+    "color": "RGB",
+    "scale": "divide by 255",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "layout": "NCHW float32"
+  },
+  "opset": 18,
+  "provider": "CPUExecutionProvider",
+  "versions": {
+    "torch": "2.14.0",
+    "onnx": "1.23.2",
+    "onnxruntime": "1.31.1"
+  },
+  "onnx_file": "sortify_v2.onnx",
+  "onnx_bytes": 9106284,
+  "onnx_sha256": "e5e0314f12aa95f590ce419ba9d5bbde7f99adf81bd94f648d5a5a03edb2a1bb",
+  "tolerance": 0.0001,
+  "max_abs_diff": 2.086162567138672e-05,
+  "cases": [
+    {
+      "name": "synthetic_1",
+      "batch_size": 1,
+      "max_abs_diff": 2.086162567138672e-05
+    },
+    {
+      "name": "synthetic_2",
+      "batch_size": 2,
+      "max_abs_diff": 1.6450881958007812e-05
+    },
+    {
+      "name": "synthetic_4",
+      "batch_size": 4,
+      "max_abs_diff": 1.430511474609375e-05
+    },
+    {
+      "name": "real_images",
+      "batch_size": 10,
+      "max_abs_diff": 1.430511474609375e-05
+    }
+  ],
+  "real_images": [
+    {
+      "file": "compost/compost_0001.jpg",
+      "sha256": "de252151f31bbcb1c180fdc6c69a86b98d26c33b0981984c4bea649d1d1a2274"
+    },
+    {
+      "file": "compost/compost_0351.jpg",
+      "sha256": "61652fd02684d2089e5e754aa5707c3571a5baba13fd70b4889f63f239c01db5"
+    },
+    {
+      "file": "glass/glass260.jpg",
+      "sha256": "96999175109f22eb335e0752b0cd1f0c4ab9c0730c11fa476329dd5d328e6133"
+    },
+    {
+      "file": "landfill/metal115.jpg",
+      "sha256": "98401b1ac8dc2b35b718d8040e3b1da7368f4da100e2810cef8ea3bbd1ef562e"
+    },
+    {
+      "file": "landfill/metal40.jpg",
+      "sha256": "47afd8d1d7b0f71943d294e01f0fa9d74cd51cbef9f68253571b67cf464f2c96"
+    },
+    {
+      "file": "paper/cardboard21.jpg",
+      "sha256": "c88a3125a0ea20bd1fa0fdc9f9bd9db14c442d9aadee5ea8becf2b8b4e3c9501"
+    },
+    {
+      "file": "paper/paper212.jpg",
+      "sha256": "ad479ba3e468ce8e87452cc74f0ae4793fc90e9997d8ac6f1f8e884b12abecce"
+    },
+    {
+      "file": "paper/paper485.jpg",
+      "sha256": "15689a583d9009343d08a377104f10252cc6e8be05e04d0107d785f260ffbd14"
+    },
+    {
+      "file": "plastic/plastic242.jpg",
+      "sha256": "20aafaf017587a3fa54a2967bfb76fc7eeddab2f0f25c209b74540da5b093fea"
+    },
+    {
+      "file": "plastic/plastic99.jpg",
+      "sha256": "9e1c27aef8c0af4ff4bbeb7d404eadd8e5077f1588f975937f4cfb83af21b489"
+    }
+  ]
+}

@@ -43,6 +43,8 @@ backend/serviceAccountKey.json
 *.pth
 *.pt
 *.onnx
+# Reviewed portable artifact for issue #65; keep other model outputs ignored.
+!ml/models/sortify_v2.onnx
 *.tflite
 *.zip
 
