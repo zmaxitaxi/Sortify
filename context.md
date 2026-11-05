@@ -2,7 +2,14 @@
 
 Personal branch: `feat/ml/max/domain-gap` in [zmaxitaxi/Sortify](https://github.com/zmaxitaxi/Sortify).
 Team repository: [BoppingNoodles/Sortify](https://github.com/BoppingNoodles/Sortify).
-Narrative reviewed: **October 29, 2026 (America/Los_Angeles)**.
+Narrative reviewed: **November 4, 2026 (America/Los_Angeles)**.
+
+## Current work — November 4
+
+- Max requested syncing this branch and completing every open issue assigned to `zmaxitaxi` in the team repository. GitHub confirms two assignments: [#63](https://github.com/BoppingNoodles/Sortify/issues/63) (centralized backend exceptions) and [#65](https://github.com/BoppingNoodles/Sortify/issues/65) (ONNX export and numerical parity). Neither issue has discussion comments yet.
+- Merged current team main (`78d0ffc`) into the personal branch without conflicts. The implementation tree now matches main; #52 and #53 are merged. The older pending-review sections below are historical.
+- Main introduced one non-executable Python script with a shebang and five unformatted Python snippets in Sprint 2 issue Markdown. These fail the required whole-tree Ruff checks. A separate prerequisite tooling commit corrects only the executable bit and snippet formatting; feature branches will share that commit.
+- Implement #63 and #65 on separate clean branches based on team main, with independent PRs targeting team `main` and Caden requested as reviewer. Keep this context file and its history on the personal branch.
 
 ## Latest PR status — October 29
 
@@ -31,10 +38,9 @@ Local helpers and hooks live under `.git/sortify/` and `.git/hooks/`; only `cont
 4. Switch to that clean branch, run the relevant tests, push the named feature branch to `origin`, and open a PR targeting `BoppingNoodles/Sortify:main`, filling the template and requesting Caden's review. Verify `context.md` is absent from both PR files and commits. Never merge the personal branch itself.
 5. Return to `feat/ml/max/domain-gap`, run `git sync-context`, and push that named branch to `origin` to back up context. Neither remote main is a push target.
 
-This personal branch currently includes **two independent, unmerged features**
-(PRs #52 and #53). Start further independent work on a fresh branch from
-`upstream/main`. `git prepare-pr` exports the entire personal implementation
-diff, so do not use it to combine these outstanding features into another PR.
+PRs #52 and #53 are now merged. Start each new independent task on a fresh
+branch from `upstream/main`; `git prepare-pr` exports the entire personal
+implementation diff, so use it only when that diff contains one intended feature.
 
 The local post-merge hook refreshes the Git snapshot after successful merges on the personal branch; an ordinary merge may therefore leave `context.md` modified. `git sync-context` also refreshes GitHub metadata and commits the update. The pre-push hook blocks updates to `main`, blocks the personal branch going to the team repository, and blocks `context.md` on any other pushed branch. Hooks can be bypassed and GitHub UI operations do not run them: always inspect PR contents. Server-side enforcement would require team repository settings; none were changed.
 
@@ -196,33 +202,34 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
 
-- Refreshed: `2026-10-28T09:53:16-07:00` (America/Los_Angeles).
+- Refreshed: `2026-11-04T22:47:46-08:00` (America/Los_Angeles).
 - Personal branch: `feat/ml/max/domain-gap`.
-- Team main: [`4e05488b779c`](https://github.com/BoppingNoodles/Sortify/commit/4e05488b779cbbe28eaef8c53c5634934b7a4e65).
+- Team main: [`78d0ffca6776`](https://github.com/BoppingNoodles/Sortify/commit/78d0ffca6776895755c1fa949e17604ac4b7d977).
 - Team main fully included in personal branch: **yes**.
 - Neither remote main is updated by this workflow.
 
 ### Recent team main commits
 
-- 4e05488 Merge pull request #46 from BoppingNoodles/feat/backend/david/rules-endpoint-integration
-- 92d5fc8 fix(municipal_rules): replaced underscore for hyphen in san francisco
-- d4662d0 Merge pull request #47 from BoppingNoodles/feat/backend/edward/mobilenet-taxonomy-upgrade
-- e822293 fix(municipal_rules): Added a null check in normalized_city()
-- b135f1d fix(classify): reformatted cleanly so the text doesn't repeat itself
-- dfa3773 feat(backend): upgrade to MobileNetV2, reconcile 5-bin taxonomy, and fix test suite
-- ca7003e feat(backend): reconcile classify endpoint with ModelService integration
-- d2a1c52 feat(classify): add municipal rules to disposal notes
-- 00b8d94 refactor(rules): move municipal rules into a shared service
-- fd00d80 docs(assignments): update disposal tips ticket and starter code for item matching
-- cf731c2 docs(assignments): update live inference starter code for mobilenetv2 and 5-bin taxonomy
-- cf224f0 Merge pull request #30 from BoppingNoodles/feat/backend/david/live-classify-integration
+- 78d0ffc Merge pull request #57 from BoppingNoodles/feat/backend/david/municipal-rules-expansion
+- c639cfd fix(rules): sort test imports to satisfy ruff linter
+- 8d2b8b3 fix(test_rules.py): reformatted
+- 2d2ff36 fix(rules): edited Sunnyvale rules with city recycling guide
+- 04889e9 chore(issues): add sprint 2 issue templates and publishing script
+- 1990c32 test(rules): added parameterized tests for the five Bay Area cities
+- 543ca3c feat(rules): moved municipal rules into rules.json and added San Jose and Sunnyvale
+- 143be33 Merge pull request #55 from BoppingNoodles/feat/ml/kathleen-maung/model-retraining-v2
+- 0f5ce53 fix(ml): implement requested changes and retrain model
+- b25d095 feat(ml): Add v2 retraining script
+- 1339de6 Merge pull request #53 from zmaxitaxi/feat/backend/max/scan-history-service
+- 09f314e chore(backend): merge main into feat/backend/max/scan-history-service and reconcile config
 
-GitHub metadata fetched: `2026-10-28T09:53:16-07:00`.
+GitHub metadata fetched: `2026-11-04T22:47:46-08:00`.
 
 ### Max's PR status
 
-- [#53](https://github.com/BoppingNoodles/Sortify/pull/53) **OPEN** — feat(backend): persist guest scan history with cursor pagination
-- [#52](https://github.com/BoppingNoodles/Sortify/pull/52) **OPEN** — feat(ml): quantize convolutions and meet compression and accuracy targets
+- [#54](https://github.com/BoppingNoodles/Sortify/pull/54) **CLOSED** — Feat/ml/max/domain gap
+- [#53](https://github.com/BoppingNoodles/Sortify/pull/53) **MERGED** — feat(backend): persist guest scan history with cursor pagination
+- [#52](https://github.com/BoppingNoodles/Sortify/pull/52) **MERGED** — feat(ml): quantize convolutions and meet compression and accuracy targets
 - [#28](https://github.com/BoppingNoodles/Sortify/pull/28) **CLOSED** — feat(backend): log method, path, client, status, and latency
 - [#27](https://github.com/BoppingNoodles/Sortify/pull/27) **CLOSED** — feat(backend): add item-specific disposal tips to classify
 - [#26](https://github.com/BoppingNoodles/Sortify/pull/26) **CLOSED** — feat(backend): read and write user scans through a firestore service
@@ -237,23 +244,22 @@ GitHub metadata fetched: `2026-10-28T09:53:16-07:00`.
 
 ### Open team PRs
 
-- [#53](https://github.com/BoppingNoodles/Sortify/pull/53) — feat(backend): persist guest scan history with cursor pagination
-- [#52](https://github.com/BoppingNoodles/Sortify/pull/52) — feat(ml): quantize convolutions and meet compression and accuracy targets
-- [#51](https://github.com/BoppingNoodles/Sortify/pull/51) — feat(classify): classification pipeline hardening and error resilience
-- [#50](https://github.com/BoppingNoodles/Sortify/pull/50) — feat(inference): pytorch model singleton inference service with latency profiling
-- [#49](https://github.com/BoppingNoodles/Sortify/pull/49) — feat(validation): multipart upload validation and request streaming middleware
-- [#48](https://github.com/BoppingNoodles/Sortify/pull/48) — feat(backend): centralized environment configuration and settings management
-- [#10](https://github.com/BoppingNoodles/Sortify/pull/10) — Feat/backend/carlos/backend config setup
+- [#67](https://github.com/BoppingNoodles/Sortify/pull/67) — feat(camera): connect live scan to classification api
+- [#56](https://github.com/BoppingNoodles/Sortify/pull/56) — [Frontend] Add API Client Resilience and Scan Error Handling
 
 ### Open tickets and owners
 
-- [#44](https://github.com/BoppingNoodles/Sortify/issues/44) — [AI/ML] Dynamic INT8 Model Quantization & Latency Benchmark (zmaxitaxi)
-- [#43](https://github.com/BoppingNoodles/Sortify/issues/43) — [AI/ML] Model Retraining Pipeline v2 on Augmented Dataset (kathleen-maung)
-- [#42](https://github.com/BoppingNoodles/Sortify/issues/42) — [AI/ML] Curate & Balance Campus Waste Dataset v2 (Challenging Items) (unassigned)
-- [#41](https://github.com/BoppingNoodles/Sortify/issues/41) — [Backend] Bay Area Municipal Rules Expansion (5 Cities) & Parameterized Tests (davidcontreras-ucb)
-- [#39](https://github.com/BoppingNoodles/Sortify/issues/39) — [Backend] Scan History Persistence Service with Guest Device UUID (zmaxitaxi)
+- [#66](https://github.com/BoppingNoodles/Sortify/issues/66) — docs(ml): Out-of-Distribution & Non-Waste Robustness Testing (unassigned)
+- [#65](https://github.com/BoppingNoodles/Sortify/issues/65) — feat(ml): PyTorch to ONNX Export & Numerical Parity Verification (zmaxitaxi)
+- [#64](https://github.com/BoppingNoodles/Sortify/issues/64) — feat(ml): Empirical Confidence Threshold Calibration (kathleen-maung)
+- [#63](https://github.com/BoppingNoodles/Sortify/issues/63) — feat(backend): Centralized Exception Handling & Server Stability (zmaxitaxi)
+- [#62](https://github.com/BoppingNoodles/Sortify/issues/62) — feat(backend): Timezone-Aware Daily Active Streak Calculator (davidcontreras-ucb)
+- [#61](https://github.com/BoppingNoodles/Sortify/issues/61) — feat(backend): User Eco-Stats Aggregation Endpoint (GET /api/stats) (edward-zhou1)
+- [#60](https://github.com/BoppingNoodles/Sortify/issues/60) — feat(backend): Production Multi-Stage Dockerfile & Cloud Deployment (janicedeng)
+- [#59](https://github.com/BoppingNoodles/Sortify/issues/59) — feat(frontend): Local Storage Service Abstraction & Data Synchronization (unassigned)
+- [#58](https://github.com/BoppingNoodles/Sortify/issues/58) — feat(frontend): History Feed Screen & Stats / Streak Dashboard (unassigned)
 - [#38](https://github.com/BoppingNoodles/Sortify/issues/38) — [Backend] Item-Specific Disposal Tips Engine & Item Matching (janicedeng)
-- [#37](https://github.com/BoppingNoodles/Sortify/issues/37) — [Frontend] API Client Resilience, Retries & Physical Device Testing (unassigned)
+- [#37](https://github.com/BoppingNoodles/Sortify/issues/37) — [Frontend] API Client Resilience, Retries & Physical Device Testing (aarav-shah-08)
 - [#36](https://github.com/BoppingNoodles/Sortify/issues/36) — [Frontend] Dynamic Waste Result Modal & Bin Color Styling (vumongthanhmai98)
-- [#35](https://github.com/BoppingNoodles/Sortify/issues/35) — [Frontend] Connect Live Camera Scan to Classification API (unassigned)
+- [#35](https://github.com/BoppingNoodles/Sortify/issues/35) — [Frontend] Connect Live Camera Scan to Classification API (BoppingNoodles)
 <!-- sortify-sync:end -->
