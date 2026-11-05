@@ -202,7 +202,7 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
 
-- Refreshed: `2026-11-04T22:47:46-08:00` (America/Los_Angeles).
+- Refreshed: `2026-11-04T23:09:45-08:00` (America/Los_Angeles).
 - Personal branch: `feat/ml/max/domain-gap`.
 - Team main: [`78d0ffca6776`](https://github.com/BoppingNoodles/Sortify/commit/78d0ffca6776895755c1fa949e17604ac4b7d977).
 - Team main fully included in personal branch: **yes**.
@@ -223,10 +223,12 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 - 1339de6 Merge pull request #53 from zmaxitaxi/feat/backend/max/scan-history-service
 - 09f314e chore(backend): merge main into feat/backend/max/scan-history-service and reconcile config
 
-GitHub metadata fetched: `2026-11-04T22:47:46-08:00`.
+GitHub metadata fetched: `2026-11-04T23:09:45-08:00`.
 
 ### Max's PR status
 
+- [#69](https://github.com/BoppingNoodles/Sortify/pull/69) **OPEN** — feat(ml): export ONNX models with strict numerical parity
+- [#68](https://github.com/BoppingNoodles/Sortify/pull/68) **OPEN** — feat(backend): centralize safe API errors and recovery
 - [#54](https://github.com/BoppingNoodles/Sortify/pull/54) **CLOSED** — Feat/ml/max/domain gap
 - [#53](https://github.com/BoppingNoodles/Sortify/pull/53) **MERGED** — feat(backend): persist guest scan history with cursor pagination
 - [#52](https://github.com/BoppingNoodles/Sortify/pull/52) **MERGED** — feat(ml): quantize convolutions and meet compression and accuracy targets
@@ -244,6 +246,8 @@ GitHub metadata fetched: `2026-11-04T22:47:46-08:00`.
 
 ### Open team PRs
 
+- [#69](https://github.com/BoppingNoodles/Sortify/pull/69) — feat(ml): export ONNX models with strict numerical parity
+- [#68](https://github.com/BoppingNoodles/Sortify/pull/68) — feat(backend): centralize safe API errors and recovery
 - [#67](https://github.com/BoppingNoodles/Sortify/pull/67) — feat(camera): connect live scan to classification api
 - [#56](https://github.com/BoppingNoodles/Sortify/pull/56) — [Frontend] Add API Client Resilience and Scan Error Handling
 
