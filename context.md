@@ -7,9 +7,28 @@ Narrative reviewed: **November 4, 2026 (America/Los_Angeles)**.
 ## Current work — November 4
 
 - Max requested syncing this branch and completing every open issue assigned to `zmaxitaxi` in the team repository. GitHub confirms two assignments: [#63](https://github.com/BoppingNoodles/Sortify/issues/63) (centralized backend exceptions) and [#65](https://github.com/BoppingNoodles/Sortify/issues/65) (ONNX export and numerical parity). Neither issue has discussion comments yet.
-- Merged current team main (`78d0ffc`) into the personal branch without conflicts. The implementation tree now matches main; #52 and #53 are merged. The older pending-review sections below are historical.
-- Main introduced one non-executable Python script with a shebang and five unformatted Python snippets in Sprint 2 issue Markdown. These fail the required whole-tree Ruff checks. A separate prerequisite tooling commit corrects only the executable bit and snippet formatting; feature branches will share that commit.
-- Implement #63 and #65 on separate clean branches based on team main, with independent PRs targeting team `main` and Caden requested as reviewer. Keep this context file and its history on the personal branch.
+- Merged current team main (`78d0ffc`) into the personal branch without conflicts. #52 and #53 are merged. The personal branch now also includes the two new feature implementations for continuity.
+- Main introduced one non-executable Python script with a shebang and five unformatted Python snippets in Sprint 2 issue Markdown. A separate prerequisite tooling commit fixes these inherited Ruff failures; both feature branches share that commit.
+- Implementations are submitted as independent PRs [#68](https://github.com/BoppingNoodles/Sortify/pull/68) for #63 and [#69](https://github.com/BoppingNoodles/Sortify/pull/69) for #65. Both target team `main`, request Caden, and exclude this file and all personal context commit history. No direct main pushes were made.
+
+### PR #68 — centralized backend exceptions (issue #63)
+
+- Branch `feat/backend/max/centralized-exceptions`, reviewed head `67b4fab7c86501738beb2e4d2b6c8e96856cf513`. GitHub CI passed; Caden's review is requested.
+- Defines public application exceptions and handlers for domain errors, HTTP/framework errors, request validation, and unexpected exceptions. Error responses and OpenAPI now consistently use `{error, code, message}`. Clients previously reading `detail` must migrate to `message`.
+- Corrupt/unsupported images return 415; oversized images return 413; model execution errors return 500. Busy inference capacity remains 503 with `Retry-After`; timeouts remain 504. Internal details/tracebacks are logged privately, including unexpected failures outside the route itself. Validation responses do not echo submitted values.
+- Full independent backend + ML suite: **250 passed**. Real local Uvicorn requests verified corrupt JPEG → 415, 11 MiB upload → 413, malformed multipart → 400, with healthy 200 after each and a valid-image 200 afterward. That server used its configured mock model and was shut down afterward. Tests also cover route/dependency/middleware exceptions, header preservation and OpenAPI.
+- Contract change is intentional under the ticket. Handlers do not promise recovery from process kills or failures after response headers are sent.
+
+### PR #69 — ONNX export and parity (issue #65)
+
+- Branch `feat/ml/max/onnx-export`, reviewed head `2833fb35dc7c4d59b48b85dc9b7b3441fad7d960`. GitHub CI passed (Python lint/tests and frontend sanity); Caden's review is requested. CodeRabbit reports success with automatic review skipped, not a completed code review.
+- Safe strict checkpoint loading, canonical classes, shared evaluation preprocessing, current PyTorch `dynamo=True` exporter with dynamic batch axes (`dynamic_shapes`), opset 18, full ONNX checker, and ONNX Runtime CPU comparisons on raw logits. Failed export/checker/parity runs preserve prior artifacts. The model/report replacements are individually atomic, not a two-file transaction; verify the recorded artifact hash after interrupted publication.
+- `ml/models/sortify_v2.onnx` is a deliberately tracked 9,106,284-byte portable artifact (narrow ignore exception and binary attributes). Its actual source is the available trained **MobileNetV2 baseline** `mobilenet_v2.pth`, epoch 10, SHA256 `54df0a06150bd004608dd39431b092348da17954b40a3fc3d7ec488406762d0e`. Retrained v2 weights were unavailable locally; do not call this artifact retrained v2 merely because of its required filename. The same script accepts the real v2 checkpoint when supplied.
+- Synthetic batches 1/2/4 and ten real validation photos across all five classes passed strict maximum absolute difference <1e-4; maximum measured difference **2.086162567e-5**. Graph embeds class order, preprocessing and provenance; outputs are logits, so clients must apply softmax for probabilities. No model deployment, accuracy improvement or speedup was claimed.
+- Full independent backend + ML suite: **245 passed**, including 12 ONNX tests for both supported architectures, additional dynamic batch sizes, invalid/nonfinite runtime outputs, explicit class order, artifact/report consistency and preservation after failure. Reports: `docs/ml/onnx_export_{report.md,metrics.json}`.
+- Optional dependencies are in `ml/requirements-onnx.txt`; CI installs them. Local verification used isolated `/private/tmp/sortify-onnx-deps` and `/private/tmp/sortify-test-deps` via `PYTHONPATH`, leaving the older virtual environment unchanged.
+
+Max also requested an explanation of the earlier and current tasks, their design decisions, evidence and limits, and a clear way to discuss the work with a senior engineer.
 
 ## Latest PR status — October 29
 
@@ -38,9 +57,10 @@ Local helpers and hooks live under `.git/sortify/` and `.git/hooks/`; only `cont
 4. Switch to that clean branch, run the relevant tests, push the named feature branch to `origin`, and open a PR targeting `BoppingNoodles/Sortify:main`, filling the template and requesting Caden's review. Verify `context.md` is absent from both PR files and commits. Never merge the personal branch itself.
 5. Return to `feat/ml/max/domain-gap`, run `git sync-context`, and push that named branch to `origin` to back up context. Neither remote main is a push target.
 
-PRs #52 and #53 are now merged. Start each new independent task on a fresh
-branch from `upstream/main`; `git prepare-pr` exports the entire personal
-implementation diff, so use it only when that diff contains one intended feature.
+PRs #52 and #53 are merged. PRs #68 and #69 are independent and awaiting review.
+Start each further task on a fresh branch from `upstream/main`; `git prepare-pr`
+exports the entire personal implementation diff, so do not combine the two
+outstanding features into another PR.
 
 The local post-merge hook refreshes the Git snapshot after successful merges on the personal branch; an ordinary merge may therefore leave `context.md` modified. `git sync-context` also refreshes GitHub metadata and commits the update. The pre-push hook blocks updates to `main`, blocks the personal branch going to the team repository, and blocks `context.md` on any other pushed branch. Hooks can be bypassed and GitHub UI operations do not run them: always inspect PR contents. Server-side enforcement would require team repository settings; none were changed.
 
@@ -51,9 +71,9 @@ Sortify is a UC Berkeley student project: identify waste from a phone photo, sho
 - Mobile: React Native/Expo, React Navigation, screens in `mobile/src/screens`, API client in `mobile/src/services/api.js`.
 - Backend: FastAPI at `backend.app.main:app`; Swagger `/docs`, ReDoc `/redoc`, health `/health`, classification `/api/classify`, municipal rules `/api/rules`, history `/api/history`, and standalone `/upload-image`.
 - ML: PyTorch/Torchvision scripts in `ml/scripts`, primarily MobileNetV2 now, compared with a frozen-backbone ResNet-18 baseline.
-- Persistence on upstream main: the history router still uses shared in-memory scaffolding and placeholder Bearer-token checks. Personal branch / PR #53 replaces that with guest UUID history, explicit memory/Firestore modes and cursor pagination. It is implemented and tested, but awaits review/merge; production account authentication remains separate.
+- Persistence on upstream main: merged PR #53 provides guest UUID history, explicit memory/Firestore modes and cursor pagination. Production account authentication remains separate; the guest UUID is a record identifier, not verified identity.
 - Canonical labels and checkpoint order: **`compost`, `glass`, `landfill`, `paper`, `plastic`**. Read `class_names` from the checkpoint or `classes.json`; never assume paper is index 0. Inference uses softmax confidence, not raw logits.
-- Datasets, checkpoints, and credentials are ignored. They were not copied from the older checkout. This fresh workspace has no trained weights or campus dataset.
+- Source datasets, PyTorch checkpoints, and credentials remain ignored and were not copied from the older checkout. Local generated INT8 weights remain ignored. The single reviewed ONNX artifact is tracked intentionally; the source FP32 checkpoint and validation photos were read from the older checkout.
 
 ## Max's completed work
 
@@ -87,20 +107,20 @@ Kathleen's separate merged campus report (`docs/ml/campus-evaluation-report/`) r
 ## Current state and next work
 
 - Team main at this review includes live classify integration (PR #30), campus evaluation (#33), backend tests (#34), MobileNetV2/five-bin reconciliation (#47), and municipal rules integration (#46, head `4e05488`). The latest sync brought shared municipal rules and city-specific classification notes into this personal branch. Caden's config, upload validation, inference-service, and hardening PRs #48–51 were open at review; do not describe those proposals as merged functionality. The automated snapshot gives newer status after a sync.
-- **Max is assigned open issue [#44 — Dynamic INT8 Model Quantization & Latency Benchmark](https://github.com/BoppingNoodles/Sortify/issues/44).** PR #52 now includes the user-authorized convolution quantization extension, with Caden requested as reviewer. Both MobileNetV2 and ResNet-18 meet >60% compression and <1-point validation-loss targets. The PR now closes #44 when merged; it does not deploy a model.
+- **Completed issue [#44 — Dynamic INT8 Model Quantization & Latency Benchmark](https://github.com/BoppingNoodles/Sortify/issues/44)** through merged PR #52, including the user-authorized convolution extension. Both MobileNetV2 and ResNet-18 meet >60% compression and <1-point validation-loss targets. This did not deploy a model.
 - Issue #44's ~45 MB → ~12 MB / >60% reduction goal resembles ResNet sizing. The initial dynamic Linear-only runs missed compression. The subsequent calibrated static convolution+Linear runs achieved 71.09% reduction for MobileNetV2 and 74.75% for ResNet-18. Keep architecture-specific sizes and accuracy separate; no serving architecture was silently swapped.
 - Ticket-based assignments supersede the old person-by-week schedule. Dataset-v2 curation (#42) is unassigned; retraining-v2 (#43) is assigned to Kathleen. Check live ownership before starting or duplicating work.
-- Current backend inference defaults to `backend/app/models/sortify_mvp_v1.pth` and returns a scaffold mock prediction when weights are missing. This differs from the ML training output path and from `settings.MODEL_PATH`; do not claim real deployed inference based only on a successful HTTP response.
+- Current backend inference defaults to `backend/app/models/sortify_mvp_v1.pth`, honors `settings.MODEL_PATH`, and returns a scaffold mock prediction when weights are missing. Its default still differs from ML training output paths; do not claim real deployed inference based only on a successful HTTP response.
 - Current inference preprocessing resizes directly to 224×224, while shared evaluation uses resize/center crop. Track parity and checkpoint metadata during future integration. No fixes to application code were included here.
-- Remaining backlog includes dataset expansion, real-world retraining, confidence calibration, ONNX parity, out-of-distribution testing, charts, release packaging, frontend camera integration, and deployment. History is now implemented in PR #53, pending review/merge. Do not claim production persistence was verified.
+- Remaining Sprint 2 backlog includes confidence calibration, out-of-distribution testing, statistics/streaks, frontend integration and deployment. History is merged; centralized errors and ONNX export are implemented in PRs #68/#69 pending review. Do not claim production persistence or new real-world model performance was verified.
 
 ## New work and PRs from this session
 
 ### PR #52 — calibrated convolution INT8 (issue #44)
 
 Branch: `feat/ml/max/int8-quantization`, based directly on team main, pushed to
-Max's fork. [PR #52](https://github.com/BoppingNoodles/Sortify/pull/52) requests
-`BoppingNoodles` as reviewer and now closes #44 when merged. Updated PR head:
+Max's fork. [PR #52](https://github.com/BoppingNoodles/Sortify/pull/52) was merged
+on October 28 (Los Angeles time). Recorded implementation head before merging:
 `dac87e26e815f915507c0873698bd69e35777a61`. **GitHub CI passed for the convolution
 update** (Python lint/tests and frontend sanity). Its files/commits exclude personal context.
 
@@ -154,10 +174,10 @@ included in the quantization PR.
 Max explicitly authorized assigning and implementing issue #39 after reviewing
 unclaimed tickets. It is now assigned to `zmaxitaxi`.
 [PR #53](https://github.com/BoppingNoodles/Sortify/pull/53), branch
-`feat/backend/max/scan-history-service`, requests Caden's review and closes #39
-when merged. It is independent of #52, based directly on main, with no context
+`feat/backend/max/scan-history-service`, was merged on October 28 (Los Angeles time).
+It is independent of #52, based directly on main, with no context
 file or personal context commits. **GitHub CI passed** (Python lint/tests and
-frontend sanity checks); both PRs are awaiting Caden's review.
+frontend sanity checks); both PRs are now merged.
 
 - `HistoryService` saves to `users/{user_id}/scans/{scan_id}` in Firestore mode;
   bounded `limit+1` reads use descending timestamp/document-ID cursors.
@@ -178,12 +198,12 @@ frontend sanity checks); both PRs are awaiting Caden's review.
   has not been run** because no credentials or emulator were configured.
 
 Both implementations are present on this personal branch for continuity, while
-the two PRs contain only their respective feature. Both remote main refs remain
-unchanged; review and merging belong to the PR workflow.
+the two PRs contain only their respective feature. Team main received them through
+the PR workflow; this agent never pushed directly to either main branch.
 
 ## Reading order and evidence
 
-1. Current GitHub tickets and PRs, especially #44 and the generated snapshot.
+1. Current GitHub tickets and PRs, especially #63/#65 and PRs #68/#69, plus the generated snapshot. PRs #52/#53 document earlier implementation evidence.
 2. `README.md`, `SETUP.md`, `.github/pull_request_template.md`, `.github/workflows/ci.yml`.
 3. `weekly_assignments/updated_team_weekly_assignments.md`, `updated_ml-ai.md`, `updated_backend.md`, `updated_frontend.md`, plus their matching `starter_code/updated_*_code.md` files. Scaffolds illustrate intended work; inspect actual implementation before copying them.
 4. `docs/ml/architecture_comparison.md`, `docs/ml/demo_scanning_guide.md`, `docs/ml/campus-evaluation-report/{README.md,metrics.json,predictions.json}`.
@@ -197,7 +217,8 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 - Initial sync verification: `ruff check .` and `ruff format --check .` passed; 91 backend/ML tests passed. The older virtual environment lacked the declared `pydantic-settings` package, so test execution used an isolated temporary install through `PYTHONPATH` without changing that environment.
 - Workflow fixture checks passed for snapshot refresh, empty PR refusal, clean PR ancestry and files, main push/deletion blocking, team-repository personal-branch blocking, context file/history blocking, and allowed clean feature/personal pushes.
 - After adding convolution quantization and combining both independent features on the personal branch, the full backend/ML suite passed **114 tests** (previously 109 before the five new static cases). Both Ruff checks and whitespace verification passed. The local HTTP verification server was shut down after its successful pagination check.
-- Max subsequently authorized completing assigned issue #44, submitting a PR with Caden as reviewer, then selecting and assigning Max another suitable open issue. This extends the task beyond context setup; do not mark #44 complete until measured results and the PR exist.
+- Earlier authorization covered #44/#39; those PRs are merged. On November 4 Max authorized syncing the personal branch and completing all current assignments (#63/#65), retaining the PR-only/Caden-review workflow. Both implementations and PRs now exist; the issues stay open until the team's merge/review workflow resolves them.
+- Final combined personal branch verification on November 4: **262 backend/ML tests passed**, both whole-tree Ruff checks passed, and whitespace checks passed. Both PRs' current heads passed GitHub CI and have Caden requested. Introduced commit ancestry was checked: #68 has three commits, #69 four; `context.md` is absent from every introduced feature commit. No live Firestore check, retrained v2 checkpoint export, or deployment is claimed.
 
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
