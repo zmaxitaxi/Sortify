@@ -1,39 +1,30 @@
-"""Municipal waste-sorting rules shared by the rules and classify routers."""
+"""Municipal waste-sorting rules shared by the rules and classify routers.
+
+The rules live in backend/app/data/rules.json so they can be edited without
+touching code. Re-check each city's rules against its source_url before demos.
+"""
+
+import json
+from pathlib import Path
+
+_RULES_PATH = Path(__file__).resolve().parent.parent / "data" / "rules.json"
 
 DEFAULT_CITY = "berkeley"
 
-MUNICIPAL_RULES: dict[str, dict] = {
-    "berkeley": {
-        "rules": {
-            "compost": "Food scraps, soiled paper, plant trimmings, BPI-certified packaging.",
-            "plastic": "Rigid plastics #1-#7, bottles, jugs, tubs. Empty and rinse.",
-            "paper": "Clean paper, cardboard, newsprint, magazines.",
-            "glass": "Glass bottles and jars only. Rinse clean.",
-            "landfill": "Styrofoam, plastic wrap, chip bags, composite packaging.",
-        },
-        "source_url": "https://berkeleyca.gov/city-services/trash-recycling",
-    },
-    "san-francisco": {
-        "rules": {
-            "compost": "Food scraps, plant debris, soiled paper products.",
-            "plastic": "Clean rigid plastics, containers, bottles.",
-            "paper": "Clean paper, boxes, unsoiled cartons.",
-            "glass": "Bottles and jars (any color).",
-            "landfill": "Non-recyclable plastics, foil wrap, treated items.",
-        },
-        "source_url": "https://sfenvironment.org/zero-waste",
-    },
-    "oakland": {
-        "rules": {
-            "compost": "Food waste, paper plates, yard trimmings.",
-            "plastic": "Plastic bottles, tubs, and jugs.",
-            "paper": "Clean mixed paper and cardboard.",
-            "glass": "Food and beverage glass containers.",
-            "landfill": "Wrappers, styrofoam, non-conforming items.",
-        },
-        "source_url": "https://www.oaklandrecycles.com/",
-    },
-}
+
+def _load_rules() -> dict[str, dict]:
+    """Read rules.json once and check that every city has the fields we need."""
+    if not _RULES_PATH.is_file():
+        raise FileNotFoundError(f"Municipal rules file not found at {_RULES_PATH}")
+    with _RULES_PATH.open(encoding="utf-8") as handle:
+        data = json.load(handle)
+    for city, entry in data.items():
+        if "rules" not in entry or "source_url" not in entry:
+            raise ValueError(f"rules.json: '{city}' needs 'rules' and 'source_url'")
+    return data
+
+
+MUNICIPAL_RULES: dict[str, dict] = _load_rules()
 
 
 def normalize_city(city: str | None) -> str:

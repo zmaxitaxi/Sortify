@@ -4,6 +4,7 @@ import io
 
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from backend.app.main import app
 from backend.app.services.tips_service import (
@@ -55,9 +56,11 @@ def test_longest_item_key_wins():
 
 
 def test_classify_response_includes_compost_tip_for_the_mock_carton():
+    image = io.BytesIO()
+    Image.new("RGB", (16, 16), "green").save(image, format="JPEG")
     response = client.post(
         "/api/classify",
-        files={"file": ("carton.jpg", io.BytesIO(b"\xff\xd8\xff"), "image/jpeg")},
+        files={"file": ("carton.jpg", image.getvalue(), "image/jpeg")},
         params={"location": "berkeley"},
     )
     assert response.status_code == 200

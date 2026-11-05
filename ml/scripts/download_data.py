@@ -24,7 +24,7 @@ from pathlib import Path
 # Default Google Drive share link for the unified 5-class Sortify dataset:
 DEFAULT_GDRIVE_URL = os.getenv(
     "SORTIFY_DATASET_GDRIVE_URL",
-    "https://drive.google.com/file/d/1PhS5g3ZaAT3A_iOBek0l9mZkdWRqmu89/view?usp=sharing",
+    "https://drive.google.com/file/d/1b37CM4vfEpdVjmISxXnMaL6B0J-Srtoj/view?usp=sharing",
 )
 
 CHUNK_SIZE = 1024 * 1024  # 1 MB

@@ -3,6 +3,7 @@
 import io
 
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from backend.app.main import app
 
@@ -12,7 +13,9 @@ AUTH_HEADERS = {"Authorization": "Bearer test-valid-token"}
 
 
 def test_classify_endpoint_success():
-    fake_image = io.BytesIO(b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01")
+    fake_image = io.BytesIO()
+    Image.new("RGB", (16, 16), "green").save(fake_image, format="JPEG")
+    fake_image.seek(0)
     response = client.post(
         "/api/classify",
         files={"file": ("sample.jpg", fake_image, "image/jpeg")},

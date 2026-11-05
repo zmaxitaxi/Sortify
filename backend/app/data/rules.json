@@ -1,0 +1,52 @@
+{
+  "berkeley": {
+    "rules": {
+      "compost": "Food scraps, food-soiled paper, coffee grounds, plant and yard debris. Only items labeled BPI Certified or CMA can be composted.",
+      "plastic": "Rigid plastic containers go in the container and bottle recycling cart. Empty and rinse. Plastic bags and film go in the landfill container.",
+      "paper": "Clean, dry paper, cardboard and molded fiber go in the paper and cardboard recycling cart. Paper towels and paper cups do not. Juice and milk boxes go in the landfill container.",
+      "glass": "Glass bottles and jars go in the container and bottle recycling cart. Rinse clean. Dishware, ceramics and window glass do not belong in recycling.",
+      "landfill": "Plastic bags and film, foam, juice and milk boxes, diapers and pet waste. Hazardous and electronic waste go to an Alameda County hazardous waste facility."
+    },
+    "source_url": "https://berkeleyca.gov/city-services/trash-recycling/waste-sorting-guide"
+  },
+  "san-francisco": {
+    "rules": {
+      "compost": "Food scraps, food-soiled and waxy paper, plants, and plastic labeled compostable go in the green bin.",
+      "plastic": "Clean, empty plastic containers go in the blue bin. Check SFRecycles.org for film and flexible plastics.",
+      "paper": "Clean, dry paper and cardboard go in the blue bin, including empty paper cups. Food-soiled paper goes in the green bin.",
+      "glass": "Empty glass bottles and jars go in the blue bin. Rinse them first.",
+      "landfill": "Only what cannot be recycled or composted goes in the black bin. Styrofoam cannot go in the blue or green bins."
+    },
+    "source_url": "https://sfenvironment.org/mandatory-recycling-and-composting-ordinance"
+  },
+  "oakland": {
+    "rules": {
+      "compost": "Food scraps, food-soiled paper and yard debris go in the compost cart. Do not bag them in plastic bags.",
+      "plastic": "Rinse plastic bottles and containers and place them in the recycling cart. Toys, single-use utensils, plates, cups, straws, hangers and hoses are not accepted.",
+      "paper": "Clean paper and cardboard go in the recycling cart. Food-soiled paper goes in the compost cart.",
+      "glass": "Glass bottles and jars go in the recycling cart. Rinse them first.",
+      "landfill": "Anything that cannot be recycled or composted goes in the trash cart. Clothing does not belong in the recycling cart."
+    },
+    "source_url": "https://www.oaklandrecycles.com/"
+  },
+  "san-jose": {
+    "rules": {
+      "compost": "Food scraps can go in your garbage cart. The city sorts and composts them. Yard trimmings go loose in the street or in the optional yard trimmings cart.",
+      "plastic": "Clean, empty plastic containers go in the blue recycling cart. Check SanJoseRecycles.org for bags and film.",
+      "paper": "Clean paper and cardboard go in the blue recycling cart (single-stream).",
+      "glass": "Glass bottles and jars go in the blue recycling cart.",
+      "landfill": "Garbage goes in the garbage cart. Batteries, paint, medicine and other household hazardous waste must not go in garbage or recycling."
+    },
+    "source_url": "https://sanjoserecycles.org"
+  },
+  "sunnyvale": {
+    "rules": {
+      "compost": "Put food scraps in a clear plastic bag in the food side of your split cart or your food-only cart. Compostable or paper bags are fine.",
+      "plastic": "Rinse plastic containers and place them in the recycling cart. Metal cans and clean foil go in the recycling cart. Plastic bags can be recycled at grocery stores.",
+      "paper": "Flatten cardboard boxes and keep paper clean. Remove inserts from paper boxes.",
+      "glass": "Glass bottles and jars go in the recycling cart. Empty and rinse containers, put lids back on.",
+      "landfill": "Place these items in your split garbage cart or garbage bin. Hazardous waste, electronics, and batteries must be taken to a household hazardous waste facility."
+    },
+    "source_url": "https://www.sunnyvale.ca.gov/homes-streets-and-property/recycling-and-garbage"
+  }
+}
