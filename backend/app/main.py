@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core.config import settings
+from backend.app.core.exceptions import ERROR_RESPONSES, register_exception_handlers
 from backend.app.middleware.telemetry import TelemetryMiddleware
 from backend.app.routers import auth, classify, history, rules, uploads
 
@@ -13,7 +14,9 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    responses=ERROR_RESPONSES,
 )
+register_exception_handlers(app)
 
 # Configure CORS for Expo dev servers, mobile test devices, and local clients
 app.add_middleware(

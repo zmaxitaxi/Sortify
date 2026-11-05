@@ -12,7 +12,7 @@
 The Sortify REST API decouples client applications (Expo / React Native mobile clients, web clients) from the core machine learning inference pipeline and Firestore persistence services.
 
 ### Core Principles
-- **Predictable Error Contracts:** All HTTP 4xx and 5xx responses conform to standard error payloads (`{"detail": "..."}`).
+- **Predictable Error Contracts:** API HTTP 4xx and 5xx responses use `{"error": true, "code": "...", "message": "..."}`.
 - **Standardized Bin Categories:** All sorting classifications are normalized to 5 core categories:
   - `compost` (Green)
   - `plastic` (Blue)
@@ -35,9 +35,21 @@ The Sortify REST API decouples client applications (Expo / React Native mobile c
 ### Standard Error Response Format
 ```json
 {
-  "detail": "Error description or validation message"
+  "error": true,
+  "code": "INVALID_IMAGE_FORMAT",
+  "message": "Unsupported or corrupted image file."
 }
 ```
+
+Clients should read `message` instead of the previous `detail` field and use
+`code` for stable error handling. Request validation returns HTTP 422 with
+`VALIDATION_ERROR` and a safe message, without echoing submitted values.
+Unexpected errors return HTTP 500 with `INTERNAL_SERVER_ERROR`; Python exception
+details and tracebacks are logged only on the server. Inference execution errors
+return HTTP 500 with `MODEL_INFERENCE_ERROR`. Capacity limits remain HTTP 503
+with `Retry-After`; inference timeouts remain HTTP 504. Framework errors such as
+unknown routes use the same envelope. These responses apply before response
+streaming starts; a failure after headers are sent cannot replace the response.
 
 ---
 
@@ -98,9 +110,13 @@ The Sortify REST API decouples client applications (Expo / React Native mobile c
 ```
 
 #### Error Responses
-- **HTTP 400 Bad Request:** Missing or invalid file payload.
+- **HTTP 400 Bad Request:** Empty file or malformed multipart request.
 - **HTTP 413 Payload Too Large:** File exceeds the 10MB upload limit.
-- **HTTP 415 Unsupported Media Type:** Uploaded file MIME type is not an accepted image format.
+- **HTTP 415 Unsupported Media Type:** Unsupported MIME/signature/extension, corrupt image, or unsafe image dimensions (`INVALID_IMAGE_FORMAT`).
+- **HTTP 422 Unprocessable Entity:** Missing file field or invalid request parameters (`VALIDATION_ERROR`).
+- **HTTP 500 Internal Server Error:** Model execution or unexpected pipeline failure; no private exception detail.
+- **HTTP 503 Service Unavailable:** All inference workers are occupied; retry later.
+- **HTTP 504 Gateway Timeout:** Inference exceeded the configured timeout.
 
 ---
 
@@ -226,4 +242,7 @@ old mock Bearer/offset contract must migrate to the device UUID/cursor contract.
 | `404 Not Found` | Resource not located | Unsupported city or scan record not found |
 | `413 Payload Too Large` | Request entity too large | Uploaded image > 10MB |
 | `415 Unsupported Media Type` | Media type rejected | Non-image file uploaded |
+| `422 Unprocessable Entity` | Request validation failed | Missing file field or invalid guest UUID |
 | `500 Internal Server Error` | Unhandled server exception | Unexpected server failure |
+| `503 Service Unavailable` | Temporary capacity/storage failure | Busy inference workers or unavailable history store |
+| `504 Gateway Timeout` | Inference deadline exceeded | Model execution took too long |

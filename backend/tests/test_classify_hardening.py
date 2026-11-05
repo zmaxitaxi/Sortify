@@ -18,7 +18,7 @@ from backend.scripts.benchmark_inference import (
     run_inference_benchmark,
 )
 
-client = TestClient(app)
+client = TestClient(app, raise_server_exceptions=False)
 
 
 @pytest.fixture(autouse=True)
@@ -127,14 +127,14 @@ def test_classify_rgba_and_grayscale():
     assert res_gray.status_code == 200
 
 
-def test_classify_corrupted_payload_returns_422():
-    """Verify corrupted image payload with valid magic bytes returns HTTP 422 cleanly."""
+def test_classify_corrupted_payload_returns_415():
+    """Verify corrupted image payload with valid magic bytes returns HTTP 415 cleanly."""
     corrupted_bytes = b"\xff\xd8\xff\xe0" + b"\x00" * 30 + b"garbage_corrupted_stream"
     files = {"file": ("corrupted.jpg", corrupted_bytes, "image/jpeg")}
     response = client.post("/api/classify", files=files)
 
-    assert response.status_code == 422
-    assert "Could not read the image" in response.json()["detail"]
+    assert response.status_code == 415
+    assert "corrupted image" in response.json()["message"]
 
 
 def test_classify_rejects_oversized_dimensions():
@@ -142,7 +142,7 @@ def test_classify_rejects_oversized_dimensions():
     response = client.post(
         "/api/classify", files={"file": ("too-wide.png", payload, "image/png")}
     )
-    assert response.status_code == 422
+    assert response.status_code == 415
 
 
 def test_classify_empty_payload():
@@ -150,7 +150,7 @@ def test_classify_empty_payload():
     files = {"file": ("empty.jpg", b"", "image/jpeg")}
     response = client.post("/api/classify", files=files)
     assert response.status_code == 400
-    assert "empty" in response.json()["detail"].lower()
+    assert "empty" in response.json()["message"].lower()
 
 
 def test_classify_timeout_protection(monkeypatch):
@@ -171,11 +171,11 @@ def test_classify_timeout_protection(monkeypatch):
         response = client.post("/api/classify", files=files)
 
         assert response.status_code == 504
-        assert "timed out" in response.json()["detail"].lower()
+        assert "timed out" in response.json()["message"].lower()
 
 
 def test_classify_runtime_error_resilience(monkeypatch):
-    """Verify PyTorch / CUDA RuntimeError returns HTTP 503 instead of crashing server."""
+    """Verify PyTorch / CUDA RuntimeError returns HTTP 500 instead of crashing server."""
 
     def failing_predict(self, image_bytes: bytes):
         raise RuntimeError("CUDA device out of memory or kernel launch failure")
@@ -186,8 +186,8 @@ def test_classify_runtime_error_resilience(monkeypatch):
     files = {"file": ("error.jpg", payload, "image/jpeg")}
     response = client.post("/api/classify", files=files)
 
-    assert response.status_code == 503
-    assert "temporarily unavailable" in response.json()["detail"]
+    assert response.status_code == 500
+    assert "Model inference failed" in response.json()["message"]
 
 
 def test_classify_unexpected_exception_resilience(monkeypatch):
@@ -203,7 +203,7 @@ def test_classify_unexpected_exception_resilience(monkeypatch):
     response = client.post("/api/classify", files=files)
 
     assert response.status_code == 500
-    assert "unexpected error" in response.json()["detail"].lower()
+    assert "unexpected error" in response.json()["message"].lower()
 
 
 def test_classify_deduplicates_alternatives(monkeypatch):
@@ -331,7 +331,7 @@ def test_relative_checkpoint_path_does_not_depend_on_cwd(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("loaded", [False, True])
-def test_corrupt_jpeg_header_returns_422_even_with_model(monkeypatch, loaded):
+def test_corrupt_jpeg_header_returns_415_even_with_model(monkeypatch, loaded):
     monkeypatch.setattr(
         "backend.app.services.model_service.model_service.model",
         torch.nn.Identity() if loaded else None,
@@ -339,7 +339,7 @@ def test_corrupt_jpeg_header_returns_422_even_with_model(monkeypatch, loaded):
     response = client.post(
         "/api/classify", files={"file": ("broken.jpg", b"\xff\xd8\xff", "image/jpeg")}
     )
-    assert response.status_code == 422
+    assert response.status_code == 415
 
 
 def test_checkpoint_with_missing_labels_cannot_load_six_outputs(tmp_path):

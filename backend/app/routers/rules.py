@@ -1,7 +1,8 @@
 """Rules and municipal waste sorting guidelines router."""
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 
+from backend.app.core.exceptions import EntityNotFoundError
 from backend.app.schemas import RuleResponse
 from backend.app.services.municipal_rules import (
     DEFAULT_CITY,
@@ -24,9 +25,8 @@ def get_city_rules(city: str):
     """Retrieve waste sorting rules for a specific municipality."""
     city_data = get_city(city)
     if city_data is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"City '{city}' not found. Supported cities: {list_cities()}",
+        raise EntityNotFoundError(
+            f"City '{city}' not found. Supported cities: {list_cities()}",
         )
 
     return RuleResponse(

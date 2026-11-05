@@ -43,7 +43,7 @@ def test_unknown_city_returns_404_with_suggestions():
     """An unknown city gets a 404 that lists the supported cities."""
     response = client.get("/api/rules/unknown_village")
     assert response.status_code == 404
-    detail = response.json()["detail"]
+    detail = response.json()["message"]
     for city in SUPPORTED_CITIES:
         assert city in detail
 

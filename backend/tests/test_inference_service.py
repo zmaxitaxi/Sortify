@@ -170,7 +170,7 @@ def test_initialized_singleton_is_not_reconfigured():
     assert model_service.model_path == original_path
 
 
-def test_corrupt_jpeg_returns_422_with_installed_model(monkeypatch):
+def test_corrupt_jpeg_returns_415_with_installed_model(monkeypatch):
     from fastapi.testclient import TestClient
 
     from backend.app.main import app
@@ -180,7 +180,7 @@ def test_corrupt_jpeg_returns_422_with_installed_model(monkeypatch):
         "/api/classify",
         files={"file": ("corrupt.jpg", b"\xff\xd8\xff", "image/jpeg")},
     )
-    assert response.status_code == 422
+    assert response.status_code == 415
 
 
 def test_interoperability_with_model_service_module():

@@ -130,7 +130,7 @@ def test_classify_endpoint_rejects_empty_file():
         files={"file": ("empty.jpg", b"", "image/jpeg")},
     )
     assert response.status_code == 400
-    assert "Empty file" in response.json()["detail"]
+    assert "Empty file" in response.json()["message"]
 
 
 def test_classify_endpoint_rejects_unsupported_mime():
@@ -167,7 +167,7 @@ def test_classify_rejects_corrupt_image_after_signature_check():
         "/api/classify",
         files={"file": ("broken.jpg", b"\xff\xd8\xffinvalid-jpeg", "image/jpeg")},
     )
-    assert response.status_code == 422
+    assert response.status_code == 415
 
 
 def test_query_cannot_override_server_upload_limit(monkeypatch):

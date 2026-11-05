@@ -7,6 +7,7 @@ from PIL import UnidentifiedImageError
 from PIL.Image import DecompressionBombError
 
 from backend.app.core.config import settings
+from backend.app.core.exceptions import InvalidImageError, ModelInferenceError
 from backend.app.schemas import (
     ClassificationAlternative,
     ClassifyResponse,
@@ -96,25 +97,9 @@ async def classify_item(
             detail=f"Inference request timed out after {timeout_seconds:.1f}s.",
         ) from exc
     except IMAGE_DECODE_ERRORS as exc:
-        logger.warning("Invalid or corrupted image payload: %s", exc)
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Could not read the image. The file may be corrupted, oversized, or has an invalid format.",
-        ) from exc
+        raise InvalidImageError() from exc
     except (RuntimeError, MemoryError) as exc:
-        logger.error("Model inference runtime execution failure: %s", exc)
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Inference engine temporarily unavailable or execution failed.",
-        ) from exc
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Unexpected classification pipeline error")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Inference pipeline encountered an unexpected error.",
-        ) from None
+        raise ModelInferenceError() from exc
 
     # 3. Post-inference defensive processing
     try:
@@ -175,9 +160,5 @@ async def classify_item(
             ),
             alternatives=alternatives,
         )
-    except Exception:
-        logger.exception("Failed to build classification response payload")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error constructing classification response.",
-        ) from None
+    except Exception as exc:
+        raise ModelInferenceError() from exc

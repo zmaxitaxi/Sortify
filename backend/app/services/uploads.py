@@ -39,7 +39,7 @@ async def store_image_upload(
     """Stream an image to disk and return the Week 1 receipt payload."""
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail="Invalid file type. Image required.",
         )
 

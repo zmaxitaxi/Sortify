@@ -37,7 +37,7 @@ def test_classify_endpoint_invalid_file():
         files={"file": ("test.txt", fake_file, "text/plain")},
     )
     assert response.status_code == 415
-    assert "Unsupported media type" in response.json()["detail"]
+    assert "Unsupported media type" in response.json()["message"]
 
 
 def test_classify_endpoint_oversized_file():
@@ -67,7 +67,7 @@ def test_rules_endpoint_get_city():
 def test_rules_endpoint_not_found():
     response = client.get("/api/rules/nonexistent-city")
     assert response.status_code == 404
-    assert "Supported cities" in response.json()["detail"]
+    assert "Supported cities" in response.json()["message"]
 
 
 def test_rules_endpoint_get_all():

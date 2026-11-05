@@ -40,8 +40,8 @@ def test_upload_image_rejects_non_image(upload_dir):
         "/upload-image",
         files={"file": ("notes.txt", io.BytesIO(b"hello"), "text/plain")},
     )
-    assert response.status_code == 400
-    assert "Image required" in response.json()["detail"]
+    assert response.status_code == 415
+    assert "Image required" in response.json()["message"]
     assert list(upload_dir.iterdir()) == []
 
 
@@ -53,7 +53,7 @@ def test_upload_image_rejects_missing_content_type(upload_dir):
     )
     with pytest.raises(HTTPException) as raised:
         asyncio.run(store_image_upload(upload, dest_dir=upload_dir))
-    assert raised.value.status_code == 400
+    assert raised.value.status_code == 415
     assert "Image required" in raised.value.detail
     assert list(upload_dir.iterdir()) == []
 
@@ -64,7 +64,7 @@ def test_upload_image_rejects_empty_file(upload_dir):
         files={"file": ("empty.jpg", io.BytesIO(b""), "image/jpeg")},
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Empty file."
+    assert response.json()["message"] == "Empty file."
     assert not (upload_dir / "empty.jpg").exists()
 
 
@@ -86,7 +86,7 @@ def test_upload_image_rejects_oversized_payload(upload_dir, monkeypatch):
         files={"file": ("big.jpg", io.BytesIO(b"12345"), "image/jpeg")},
     )
     assert response.status_code == 413
-    assert "Payload too large" in response.json()["detail"]
+    assert "Payload too large" in response.json()["message"]
     assert not (upload_dir / "big.jpg").exists()
 
 
@@ -100,7 +100,8 @@ def test_upload_image_storage_error_is_http_500(upload_dir, monkeypatch):
         files={"file": ("photo.jpg", io.BytesIO(b"\xff\xd8"), "image/jpeg")},
     )
     assert response.status_code == 500
-    assert "Could not store upload" in response.json()["detail"]
+    assert response.json()["code"] == "INTERNAL_SERVER_ERROR"
+    assert "disk full" not in response.text
 
 
 def test_health_and_upload_are_in_openapi():
