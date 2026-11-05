@@ -55,7 +55,9 @@ CONFIDENCE_CUTOFF = 0.50
 
 def load_model(weights_path: Path):
     model = models.mobilenet_v2(weights=None)
-    model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, len(CATEGORIES))
+    model.classifier[1] = torch.nn.Linear(
+        model.classifier[1].in_features, len(CATEGORIES)
+    )
     if weights_path.exists():
         model.load_state_dict(torch.load(weights_path, map_location="cpu"))
         print(f"[*] Loaded model from {weights_path}")
@@ -70,22 +72,27 @@ def load_model(weights_path: Path):
 
 
 def run_stress_test():
-    preprocess = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+    preprocess = transforms.Compose(
+        [
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
 
     model = load_model(MODEL_PATH)
 
     if not OOD_DATA_DIR.exists():
         OOD_DATA_DIR.mkdir(parents=True, exist_ok=True)
-        print(f"[!] Created directory {OOD_DATA_DIR}. Please place 30 non-trash test images inside.")
+        print(
+            f"[!] Created directory {OOD_DATA_DIR}. Please place 30 non-trash test images inside."
+        )
         return
 
     image_files = [
-        f for f in OOD_DATA_DIR.iterdir()
+        f
+        for f in OOD_DATA_DIR.iterdir()
         if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]
     ]
 
@@ -94,7 +101,9 @@ def run_stress_test():
         return
 
     print(f"\n--- Running OOD Robustness Stress Test on {len(image_files)} Images ---")
-    print(f"{'Image':<30} | {'Top Class':<12} | {'Confidence':<10} | {'Flagged Uncertain?'}")
+    print(
+        f"{'Image':<30} | {'Top Class':<12} | {'Confidence':<10} | {'Flagged Uncertain?'}"
+    )
     print("-" * 75)
 
     flagged_uncertain_count = 0
@@ -116,7 +125,9 @@ def run_stress_test():
                     flagged_uncertain_count += 1
 
                 status_label = "YES (SAFE)" if is_uncertain else "NO (FALSE POSITIVE)"
-                print(f"{img_path.name[:28]:<30} | {pred_class:<12} | {confidence * 100:6.2f}%   | {status_label}")
+                print(
+                    f"{img_path.name[:28]:<30} | {pred_class:<12} | {confidence * 100:6.2f}%   | {status_label}"
+                )
             except Exception as e:
                 print(f"{img_path.name[:28]:<30} | ERROR: {e}")
 
@@ -125,7 +136,9 @@ def run_stress_test():
     print("-" * 75)
     print(f"Total Non-Waste Images: {total}")
     print(f"Correctly Flagged Uncertain: {flagged_uncertain_count} ({safe_rate:.1f}%)")
-    print(f"Pass Criterion (>= 90% Safe): {'PASSED' if safe_rate >= 90.0 else 'FAILED'}")
+    print(
+        f"Pass Criterion (>= 90% Safe): {'PASSED' if safe_rate >= 90.0 else 'FAILED'}"
+    )
 
 
 if __name__ == "__main__":

@@ -60,7 +60,9 @@ def evaluate_thresholds(
     )
 
     if not test_dir.exists():
-        print(f"[!] Test directory not found at {test_dir}. Please run dataset split first.")
+        print(
+            f"[!] Test directory not found at {test_dir}. Please run dataset split first."
+        )
         return
 
     dataset = datasets.ImageFolder(test_dir, transform=transform)
@@ -75,7 +77,9 @@ def evaluate_thresholds(
         model.load_state_dict(state)
         print(f"[*] Loaded model checkpoint from {model_path}")
     else:
-        print(f"[!] Checkpoint {model_path} not found. Running with uninitialized weights for scaffolding test.")
+        print(
+            f"[!] Checkpoint {model_path} not found. Running with uninitialized weights for scaffolding test."
+        )
 
     model.eval()
 
@@ -103,7 +107,9 @@ def evaluate_thresholds(
             if results[t]["accepted"] > 0
             else 0
         )
-        rej_rate = results[t]["rejected"] / len(dataset) * 100 if len(dataset) > 0 else 0
+        rej_rate = (
+            results[t]["rejected"] / len(dataset) * 100 if len(dataset) > 0 else 0
+        )
         print(
             f"Cutoff {t:.2f} -> Precision: {acc:.2f}% | Rejection Rate: {rej_rate:.2f}% | Accepted: {results[t]['accepted']}/{len(dataset)}"
         )

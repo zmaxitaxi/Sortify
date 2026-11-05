@@ -72,7 +72,9 @@ class InvalidImageError(SortifyException):
 
 
 class PayloadTooLargeError(SortifyException):
-    def __init__(self, message: str = "Uploaded image exceeds maximum size limit (10MB)"):
+    def __init__(
+        self, message: str = "Uploaded image exceeds maximum size limit (10MB)"
+    ):
         super().__init__(message=message, code="PAYLOAD_TOO_LARGE", status_code=413)
 
 
@@ -81,7 +83,9 @@ def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(SortifyException)
     async def handle_sortify_exception(request: Request, exc: SortifyException):
-        logger.warning(f"SortifyException [{exc.code}] at {request.url.path}: {exc.message}")
+        logger.warning(
+            f"SortifyException [{exc.code}] at {request.url.path}: {exc.message}"
+        )
         return JSONResponse(
             status_code=exc.status_code,
             content={"error": True, "code": exc.code, "message": exc.message},

@@ -53,7 +53,9 @@ ONNX_OUTPUT_PATH = Path("ml/models/sortify_v2.onnx")
 
 def export_and_verify():
     print("[ONNX Export] Loading PyTorch model...")
-    num_classes = 5  # Canonical 5-bin taxonomy: compost, glass, landfill, paper, plastic
+    num_classes = (
+        5  # Canonical 5-bin taxonomy: compost, glass, landfill, paper, plastic
+    )
     model = models.mobilenet_v2(weights=None)
     model.classifier[1] = torch.nn.Linear(model.classifier[1].in_features, num_classes)
 
@@ -100,7 +102,9 @@ def export_and_verify():
 
     diff = float(np.max(np.abs(pytorch_outs - ort_outs)))
     print(f"[ONNX Export] Maximum numerical difference: {diff:.6e}")
-    assert diff < 1e-4, f"Parity check failed: output difference ({diff}) exceeds tolerance (1e-4)."
+    assert diff < 1e-4, (
+        f"Parity check failed: output difference ({diff}) exceeds tolerance (1e-4)."
+    )
     print("[*] Parity verification passed: PyTorch and ONNX Runtime match within 1e-4!")
 
 

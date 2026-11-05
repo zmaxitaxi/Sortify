@@ -55,9 +55,15 @@ router = APIRouter(prefix="/stats", tags=["Stats"])
 
 class UserStatsResponse(BaseModel):
     user_id: str = Field(..., description="Unique user or guest device UUID")
-    total_scans: int = Field(..., ge=0, description="Total lifetime waste items scanned")
-    eco_points: int = Field(..., ge=0, description="Accumulated eco-points (10 per scan)")
-    current_streak: int = Field(..., ge=0, description="Consecutive active daily sorting streak")
+    total_scans: int = Field(
+        ..., ge=0, description="Total lifetime waste items scanned"
+    )
+    eco_points: int = Field(
+        ..., ge=0, description="Accumulated eco-points (10 per scan)"
+    )
+    current_streak: int = Field(
+        ..., ge=0, description="Consecutive active daily sorting streak"
+    )
     category_counts: dict[str, int] = Field(
         default_factory=dict, description="Count of items scanned per category"
     )
@@ -118,14 +124,26 @@ def test_get_user_stats_empty():
 
 def test_get_user_stats_populated():
     user_id = "test_active_user"
-    history_service.save_scan({
-        "scan_id": "s1", "user_id": user_id, "category": "plastic",
-        "item_name": "Bottle", "bin": "Blue Recycling", "confidence": 0.95
-    })
-    history_service.save_scan({
-        "scan_id": "s2", "user_id": user_id, "category": "compost",
-        "item_name": "Apple", "bin": "Green Compost", "confidence": 0.98
-    })
+    history_service.save_scan(
+        {
+            "scan_id": "s1",
+            "user_id": user_id,
+            "category": "plastic",
+            "item_name": "Bottle",
+            "bin": "Blue Recycling",
+            "confidence": 0.95,
+        }
+    )
+    history_service.save_scan(
+        {
+            "scan_id": "s2",
+            "user_id": user_id,
+            "category": "compost",
+            "item_name": "Apple",
+            "bin": "Green Compost",
+            "confidence": 0.98,
+        }
+    )
 
     response = client.get(f"/api/stats/{user_id}")
     assert response.status_code == 200
