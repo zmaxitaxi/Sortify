@@ -2,7 +2,7 @@
 
 Personal branch: `feat/ml/max/domain-gap` in [zmaxitaxi/Sortify](https://github.com/zmaxitaxi/Sortify).
 Team repository: [BoppingNoodles/Sortify](https://github.com/BoppingNoodles/Sortify).
-Narrative reviewed: **November 4, 2026 (America/Los_Angeles)**.
+Narrative reviewed **November 8, 2026 (America/Los_Angeles)**.
 
 ## Current work — November 4
 
@@ -21,11 +21,11 @@ Narrative reviewed: **November 4, 2026 (America/Los_Angeles)**.
 
 ### PR #69 — ONNX export and parity (issue #65)
 
-- Branch `feat/ml/max/onnx-export`, reviewed head `2833fb35dc7c4d59b48b85dc9b7b3441fad7d960`. GitHub CI passed (Python lint/tests and frontend sanity); Caden's review is requested. CodeRabbit reports success with automatic review skipped, not a completed code review.
+- Branch `feat/ml/max/onnx-export`, current head `397ad1c9633a4c126df5c307bb1ac8a31eef8e5f`. Caden [requested the retrained checkpoint](https://github.com/BoppingNoodles/Sortify/pull/69#pullrequestreview-5796418327). The November 8 update addresses that feedback on the existing PR and requests Caden's review again.
 - Safe strict checkpoint loading, canonical classes, shared evaluation preprocessing, current PyTorch `dynamo=True` exporter with dynamic batch axes (`dynamic_shapes`), opset 18, full ONNX checker, and ONNX Runtime CPU comparisons on raw logits. Failed export/checker/parity runs preserve prior artifacts. The model/report replacements are individually atomic, not a two-file transaction; verify the recorded artifact hash after interrupted publication.
-- `ml/models/sortify_v2.onnx` is a deliberately tracked 9,106,284-byte portable artifact (narrow ignore exception and binary attributes). Its actual source is the available trained **MobileNetV2 baseline** `mobilenet_v2.pth`, epoch 10, SHA256 `54df0a06150bd004608dd39431b092348da17954b40a3fc3d7ec488406762d0e`. Retrained v2 weights were unavailable locally; do not call this artifact retrained v2 merely because of its required filename. The same script accepts the real v2 checkpoint when supplied.
-- Synthetic batches 1/2/4 and ten real validation photos across all five classes passed strict maximum absolute difference <1e-4; maximum measured difference **2.086162567e-5**. Graph embeds class order, preprocessing and provenance; outputs are logits, so clients must apply softmax for probabilities. No model deployment, accuracy improvement or speedup was claimed.
-- Full independent backend + ML suite: **245 passed**, including 12 ONNX tests for both supported architectures, additional dynamic batch sizes, invalid/nonfinite runtime outputs, explicit class order, artifact/report consistency and preservation after failure. Reports: `docs/ml/onnx_export_{report.md,metrics.json}`.
+- `ml/models/sortify_v2.onnx` is a tracked 9,106,282-byte portable artifact. Its current source is the retrained **MobileNetV2 v2** checkpoint `sortify_v2.pth` that Caden shared on Drive, with best epoch 10 and SHA256 `0f35a570c16d3f5abef216097549ad0146b1fcf24cb600b9500b2dd07b9b60f6`. The checkpoint is available locally at the ignored path `ml/models/sortify_v2.pth`.
+- Synthetic batches 1/2/4 and the same ten photos from the original validation split as the baseline export passed. The maximum absolute logit difference was **1.454353333e-5**, below **1e-4**. The graph embeds class order, preprocessing, and provenance. Apply softmax to the output logits for probabilities.
+- The original PR passed 245 backend and ML tests. The checkpoint update passed all **12 ONNX tests**, both Ruff checks, and GitHub Python and frontend CI. The current measurements and reproduction steps are in `docs/ml/onnx_export_metrics.json` and `docs/ml/onnx_export_report.md`.
 - Optional dependencies are in `ml/requirements-onnx.txt`; CI installs them. Local verification used isolated `/private/tmp/sortify-onnx-deps` and `/private/tmp/sortify-test-deps` via `PYTHONPATH`, leaving the older virtual environment unchanged.
 
 Max also requested an explanation of the earlier and current tasks, their design decisions, evidence and limits, and a clear way to discuss the work with a senior engineer.
@@ -73,7 +73,7 @@ Sortify is a UC Berkeley student project: identify waste from a phone photo, sho
 - ML: PyTorch/Torchvision scripts in `ml/scripts`, primarily MobileNetV2 now, compared with a frozen-backbone ResNet-18 baseline.
 - Persistence on upstream main: merged PR #53 provides guest UUID history, explicit memory/Firestore modes and cursor pagination. Production account authentication remains separate; the guest UUID is a record identifier, not verified identity.
 - Canonical labels and checkpoint order: **`compost`, `glass`, `landfill`, `paper`, `plastic`**. Read `class_names` from the checkpoint or `classes.json`; never assume paper is index 0. Inference uses softmax confidence, not raw logits.
-- Source datasets, PyTorch checkpoints, and credentials remain ignored and were not copied from the older checkout. Local generated INT8 weights remain ignored. The single reviewed ONNX artifact is tracked intentionally; the source FP32 checkpoint and validation photos were read from the older checkout.
+- Source datasets, PyTorch checkpoints, credentials, and generated INT8 weights are ignored. The single reviewed ONNX artifact is tracked intentionally. The November 8 export used the checkpoint from Caden's Drive and the original validation photos from the older checkout.
 
 ## Max's completed work
 
@@ -218,7 +218,7 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 - Workflow fixture checks passed for snapshot refresh, empty PR refusal, clean PR ancestry and files, main push/deletion blocking, team-repository personal-branch blocking, context file/history blocking, and allowed clean feature/personal pushes.
 - After adding convolution quantization and combining both independent features on the personal branch, the full backend/ML suite passed **114 tests** (previously 109 before the five new static cases). Both Ruff checks and whitespace verification passed. The local HTTP verification server was shut down after its successful pagination check.
 - Earlier authorization covered #44/#39; those PRs are merged. On November 4 Max authorized syncing the personal branch and completing all current assignments (#63/#65), retaining the PR-only/Caden-review workflow. Both implementations and PRs now exist; the issues stay open until the team's merge/review workflow resolves them.
-- Final combined personal branch verification on November 4: **262 backend/ML tests passed**, both whole-tree Ruff checks passed, and whitespace checks passed. Both PRs' current heads passed GitHub CI and have Caden requested. Introduced commit ancestry was checked: #68 has three commits, #69 four; `context.md` is absent from every introduced feature commit. No live Firestore check, retrained v2 checkpoint export, or deployment is claimed.
+- Combined personal branch verification on November 4 covered **262 backend/ML tests**, both Ruff checks, and whitespace checks. GitHub CI and the context ancestry check passed on both original PR heads. See the PR #69 notes for the November 8 checkpoint update and its verification.
 
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
