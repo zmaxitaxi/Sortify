@@ -223,7 +223,7 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
 
-- Refreshed: `2026-11-04T23:09:45-08:00` (America/Los_Angeles).
+- Refreshed: `2026-11-08T14:56:51-08:00` (America/Los_Angeles).
 - Personal branch: `feat/ml/max/domain-gap`.
 - Team main: [`78d0ffca6776`](https://github.com/BoppingNoodles/Sortify/commit/78d0ffca6776895755c1fa949e17604ac4b7d977).
 - Team main fully included in personal branch: **yes**.
@@ -244,7 +244,7 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 - 1339de6 Merge pull request #53 from zmaxitaxi/feat/backend/max/scan-history-service
 - 09f314e chore(backend): merge main into feat/backend/max/scan-history-service and reconcile config
 
-GitHub metadata fetched: `2026-11-04T23:09:45-08:00`.
+GitHub metadata fetched: `2026-11-08T14:56:51-08:00`.
 
 ### Max's PR status
 
@@ -267,6 +267,7 @@ GitHub metadata fetched: `2026-11-04T23:09:45-08:00`.
 
 ### Open team PRs
 
+- [#70](https://github.com/BoppingNoodles/Sortify/pull/70) — Add item-specific disposal tips engine and matching
 - [#69](https://github.com/BoppingNoodles/Sortify/pull/69) — feat(ml): export ONNX models with strict numerical parity
 - [#68](https://github.com/BoppingNoodles/Sortify/pull/68) — feat(backend): centralize safe API errors and recovery
 - [#67](https://github.com/BoppingNoodles/Sortify/pull/67) — feat(camera): connect live scan to classification api
@@ -274,7 +275,7 @@ GitHub metadata fetched: `2026-11-04T23:09:45-08:00`.
 
 ### Open tickets and owners
 
-- [#66](https://github.com/BoppingNoodles/Sortify/issues/66) — docs(ml): Out-of-Distribution & Non-Waste Robustness Testing (unassigned)
+- [#66](https://github.com/BoppingNoodles/Sortify/issues/66) — docs(ml): Out-of-Distribution & Non-Waste Robustness Testing (aarav-shah-08)
 - [#65](https://github.com/BoppingNoodles/Sortify/issues/65) — feat(ml): PyTorch to ONNX Export & Numerical Parity Verification (zmaxitaxi)
 - [#64](https://github.com/BoppingNoodles/Sortify/issues/64) — feat(ml): Empirical Confidence Threshold Calibration (kathleen-maung)
 - [#63](https://github.com/BoppingNoodles/Sortify/issues/63) — feat(backend): Centralized Exception Handling & Server Stability (zmaxitaxi)
