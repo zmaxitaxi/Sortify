@@ -1,8 +1,8 @@
 {
   "passed": true,
   "architecture": "mobilenet_v2",
-  "source_checkpoint": "mobilenet_v2.pth",
-  "source_checkpoint_sha256": "54df0a06150bd004608dd39431b092348da17954b40a3fc3d7ec488406762d0e",
+  "source_checkpoint": "sortify_v2.pth",
+  "source_checkpoint_sha256": "0f35a570c16d3f5abef216097549ad0146b1fcf24cb600b9500b2dd07b9b60f6",
   "class_names": [
     "compost",
     "glass",
@@ -38,30 +38,30 @@
     "onnxruntime": "1.31.1"
   },
   "onnx_file": "sortify_v2.onnx",
-  "onnx_bytes": 9106284,
-  "onnx_sha256": "e5e0314f12aa95f590ce419ba9d5bbde7f99adf81bd94f648d5a5a03edb2a1bb",
+  "onnx_bytes": 9106282,
+  "onnx_sha256": "26395d7e631d42eb3ce0f33a2eb0d520059350587a3433ccf6541c5b3e30fc31",
   "tolerance": 0.0001,
-  "max_abs_diff": 2.086162567138672e-05,
+  "max_abs_diff": 1.4543533325195312e-05,
   "cases": [
     {
       "name": "synthetic_1",
       "batch_size": 1,
-      "max_abs_diff": 2.086162567138672e-05
+      "max_abs_diff": 5.4836273193359375e-06
     },
     {
       "name": "synthetic_2",
       "batch_size": 2,
-      "max_abs_diff": 1.6450881958007812e-05
+      "max_abs_diff": 2.86102294921875e-06
     },
     {
       "name": "synthetic_4",
       "batch_size": 4,
-      "max_abs_diff": 1.430511474609375e-05
+      "max_abs_diff": 4.0531158447265625e-06
     },
     {
       "name": "real_images",
       "batch_size": 10,
-      "max_abs_diff": 1.430511474609375e-05
+      "max_abs_diff": 1.4543533325195312e-05
     }
   ],
   "real_images": [

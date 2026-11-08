@@ -9,45 +9,41 @@ Every tested element must have absolute difference **strictly below 1e-4**.
 ## Measured artifact
 
 The checked-in [`sortify_v2.onnx`](../../ml/models/sortify_v2.onnx) uses the
-available trained **MobileNetV2 baseline**, `mobilenet_v2.pth` (best epoch 10).
-The retrained `sortify_v2.pth` checkpoint was unavailable in this workspace.
-The requested output filename does not indicate retraining or deployment of v2
-weights. No initialized weights or quantized weights were substituted. Run the
-same command with the actual v2 checkpoint to replace the artifact when available.
+retrained **MobileNetV2 v2** checkpoint, `sortify_v2.pth`, shared by Caden
+during review. The checkpoint records epoch 10 as the best epoch.
 
-Source checkpoint SHA256:
-`54df0a06150bd004608dd39431b092348da17954b40a3fc3d7ec488406762d0e`.
+The source checkpoint SHA256 is
+`0f35a570c16d3f5abef216097549ad0146b1fcf24cb600b9500b2dd07b9b60f6`.
 The [machine-readable report](onnx_export_metrics.json) records artifact size,
 SHA256, runtime versions, image filenames/content hashes, and per-case results.
 
 | Input case | Batch size | Maximum absolute logit difference |
 |---|---:|---:|
-| Seeded synthetic tensors | 1 | 2.0861626e-5 |
-| Seeded synthetic tensors | 2 | 1.6450882e-5 |
-| Seeded synthetic tensors | 4 | 1.4305115e-5 |
-| Real validation photos | 10 | 1.4305115e-5 |
+| Seeded synthetic tensors | 1 | 5.4836273e-6 |
+| Seeded synthetic tensors | 2 | 2.8610229e-6 |
+| Seeded synthetic tensors | 4 | 4.0531158e-6 |
+| Real validation photos | 10 | 1.4543533e-5 |
 
-All cases passed. The real photos are deterministic, evenly spaced selections
-from the existing validation split, covering all five categories. This verifies
-framework parity for those inputs, rather than proving equivalence for every
-possible image. No accuracy, latency improvement, or campus robustness result is
-claimed by this export. The backend still uses its existing PyTorch loader.
+All cases passed. The real image case uses the same ten photos as the baseline
+export, sampled deterministically from the original validation split across
+all five categories.
 
 ## Reproduce
 
-Install the repository requirements and optional export tools:
+Place the shared checkpoint at `ml/models/sortify_v2.pth` and run the exporter
+with the repository requirements and optional export tools installed.
 
 ```bash
 python -m pip install -r requirements.txt -r ml/requirements-onnx.txt
 python ml/scripts/export_onnx.py \
-  --checkpoint ml/models/mobilenet_v2.pth \
+  --checkpoint ml/models/sortify_v2.pth \
   --image-dir data/processed/val \
   --output ml/models/sortify_v2.onnx \
   --report docs/ml/onnx_export_metrics.json
 ```
 
-For v2, supply `--checkpoint ml/models/sortify_v2.pth`. Without that flag the
-script looks for `sortify_v2.pth`, then `sortify_mvp_v1.pth`, then
+Without `--checkpoint`, the script looks for `sortify_v2.pth`, then
+`sortify_mvp_v1.pth`, then
 `mobilenet_v2.pth` in `ml/models`. Missing weights or real images fail clearly;
 the script never exports random weights as an automatic fallback. Training
 bundles must contain `model_state_dict` and the canonical `class_names` order.
