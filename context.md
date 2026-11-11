@@ -2,26 +2,29 @@
 
 Personal branch: `feat/ml/max/domain-gap` in [zmaxitaxi/Sortify](https://github.com/zmaxitaxi/Sortify).
 Team repository: [BoppingNoodles/Sortify](https://github.com/BoppingNoodles/Sortify).
-Narrative reviewed **November 8, 2026 (America/Los_Angeles)**.
+Narrative reviewed **November 10, 2026 (America/Los_Angeles)**.
 
 ## Current work — November 4
 
 - Max requested syncing this branch and completing every open issue assigned to `zmaxitaxi` in the team repository. GitHub confirms two assignments: [#63](https://github.com/BoppingNoodles/Sortify/issues/63) (centralized backend exceptions) and [#65](https://github.com/BoppingNoodles/Sortify/issues/65) (ONNX export and numerical parity). Neither issue has discussion comments yet.
 - Merged current team main (`78d0ffc`) into the personal branch without conflicts. #52 and #53 are merged. The personal branch now also includes the two new feature implementations for continuity.
 - Main introduced one non-executable Python script with a shebang and five unformatted Python snippets in Sprint 2 issue Markdown. A separate prerequisite tooling commit fixes these inherited Ruff failures; both feature branches share that commit.
-- Implementations are submitted as independent PRs [#68](https://github.com/BoppingNoodles/Sortify/pull/68) for #63 and [#69](https://github.com/BoppingNoodles/Sortify/pull/69) for #65. Both target team `main`, request Caden, and exclude this file and all personal context commit history. No direct main pushes were made.
+- Implementations were submitted as independent PRs [#68](https://github.com/BoppingNoodles/Sortify/pull/68) for #63 and [#69](https://github.com/BoppingNoodles/Sortify/pull/69) for #65. PR #69 is merged into team main. PR #68 includes the November 10 review fixes and has Caden requested again.
 
 ### PR #68 — centralized backend exceptions (issue #63)
 
-- Branch `feat/backend/max/centralized-exceptions`, reviewed head `67b4fab7c86501738beb2e4d2b6c8e96856cf513`. GitHub CI passed; Caden's review is requested.
+- Branch `feat/backend/max/centralized-exceptions`, current head `67763cb0fa23f195720f2daf7e6933d57c9b2784`. GitHub Python and frontend CI passed. Caden's review is requested again after both required changes were addressed.
+- Caden's [review](https://github.com/BoppingNoodles/Sortify/pull/68#pullrequestreview-5853632192) identified missing CORS headers on unexpected 500 responses and oversized pytest parameter IDs on Windows. CORS now wraps the full ASGI application after route registration. `app` is the public ASGI entry point and tests use `fastapi_app` for dependency overrides.
+- A regression through `/api/classify` with `Origin: http://localhost:8081` reproduced the missing header before the fix and passed afterward, asserting the safe JSON 500 body and CORS headers. Upload cases now have explicit IDs `unsupported-media`, `corrupt-jpeg`, and `oversized-jpeg`. The longest collected test environment value is 129 characters.
+- November 10 verification passed **218 backend tests on macOS with asyncio and Trio**, both Ruff checks, whitespace checks, and GitHub CI. Trio was installed only into `/private/tmp/sortify-nov10-test-deps` with the temporary settings dependency. Two atomic fixes are `fb17dba` for CORS and `67763cb` for parameter IDs. The branch includes current team main `2e3fe3c`.
 - Defines public application exceptions and handlers for domain errors, HTTP/framework errors, request validation, and unexpected exceptions. Error responses and OpenAPI now consistently use `{error, code, message}`. Clients previously reading `detail` must migrate to `message`.
 - Corrupt/unsupported images return 415; oversized images return 413; model execution errors return 500. Busy inference capacity remains 503 with `Retry-After`; timeouts remain 504. Internal details/tracebacks are logged privately, including unexpected failures outside the route itself. Validation responses do not echo submitted values.
-- Full independent backend + ML suite: **250 passed**. Real local Uvicorn requests verified corrupt JPEG → 415, 11 MiB upload → 413, malformed multipart → 400, with healthy 200 after each and a valid-image 200 afterward. That server used its configured mock model and was shut down afterward. Tests also cover route/dependency/middleware exceptions, header preservation and OpenAPI.
+- Original November 4 independent backend + ML suite had **250 passing tests**. Real local Uvicorn requests verified corrupt JPEG → 415, 11 MiB upload → 413, malformed multipart → 400, with healthy 200 after each and a valid-image 200 afterward. That server used its configured mock model and was shut down afterward. Tests also cover route/dependency/middleware exceptions, header preservation and OpenAPI.
 - Contract change is intentional under the ticket. Handlers do not promise recovery from process kills or failures after response headers are sent.
 
 ### PR #69 — ONNX export and parity (issue #65)
 
-- Branch `feat/ml/max/onnx-export`, current head `397ad1c9633a4c126df5c307bb1ac8a31eef8e5f`. Caden [requested the retrained checkpoint](https://github.com/BoppingNoodles/Sortify/pull/69#pullrequestreview-5796418327). The November 8 update addresses that feedback on the existing PR and requests Caden's review again.
+- Branch `feat/ml/max/onnx-export`, final head `397ad1c9633a4c126df5c307bb1ac8a31eef8e5f`, is merged into team main through `2e3fe3c`. The November 8 update addressed Caden's [retrained checkpoint request](https://github.com/BoppingNoodles/Sortify/pull/69#pullrequestreview-5796418327).
 - Safe strict checkpoint loading, canonical classes, shared evaluation preprocessing, current PyTorch `dynamo=True` exporter with dynamic batch axes (`dynamic_shapes`), opset 18, full ONNX checker, and ONNX Runtime CPU comparisons on raw logits. Failed export/checker/parity runs preserve prior artifacts. The model/report replacements are individually atomic, not a two-file transaction; verify the recorded artifact hash after interrupted publication.
 - `ml/models/sortify_v2.onnx` is a tracked 9,106,282-byte portable artifact. Its current source is the retrained **MobileNetV2 v2** checkpoint `sortify_v2.pth` that Caden shared on Drive, with best epoch 10 and SHA256 `0f35a570c16d3f5abef216097549ad0146b1fcf24cb600b9500b2dd07b9b60f6`. The checkpoint is available locally at the ignored path `ml/models/sortify_v2.pth`.
 - Synthetic batches 1/2/4 and the same ten photos from the original validation split as the baseline export passed. The maximum absolute logit difference was **1.454353333e-5**, below **1e-4**. The graph embeds class order, preprocessing, and provenance. Apply softmax to the output logits for probabilities.
@@ -57,10 +60,10 @@ Local helpers and hooks live under `.git/sortify/` and `.git/hooks/`; only `cont
 4. Switch to that clean branch, run the relevant tests, push the named feature branch to `origin`, and open a PR targeting `BoppingNoodles/Sortify:main`, filling the template and requesting Caden's review. Verify `context.md` is absent from both PR files and commits. Never merge the personal branch itself.
 5. Return to `feat/ml/max/domain-gap`, run `git sync-context`, and push that named branch to `origin` to back up context. Neither remote main is a push target.
 
-PRs #52 and #53 are merged. PRs #68 and #69 are independent and awaiting review.
+PRs #52, #53 and #69 are merged. PR #68 is awaiting re-review.
 Start each further task on a fresh branch from `upstream/main`; `git prepare-pr`
 exports the entire personal implementation diff, so do not combine the two
-outstanding features into another PR.
+outstanding work into another PR.
 
 The local post-merge hook refreshes the Git snapshot after successful merges on the personal branch; an ordinary merge may therefore leave `context.md` modified. `git sync-context` also refreshes GitHub metadata and commits the update. The pre-push hook blocks updates to `main`, blocks the personal branch going to the team repository, and blocks `context.md` on any other pushed branch. Hooks can be bypassed and GitHub UI operations do not run them: always inspect PR contents. Server-side enforcement would require team repository settings; none were changed.
 
@@ -112,7 +115,7 @@ Kathleen's separate merged campus report (`docs/ml/campus-evaluation-report/`) r
 - Ticket-based assignments supersede the old person-by-week schedule. Dataset-v2 curation (#42) is unassigned; retraining-v2 (#43) is assigned to Kathleen. Check live ownership before starting or duplicating work.
 - Current backend inference defaults to `backend/app/models/sortify_mvp_v1.pth`, honors `settings.MODEL_PATH`, and returns a scaffold mock prediction when weights are missing. Its default still differs from ML training output paths; do not claim real deployed inference based only on a successful HTTP response.
 - Current inference preprocessing resizes directly to 224×224, while shared evaluation uses resize/center crop. Track parity and checkpoint metadata during future integration. No fixes to application code were included here.
-- Remaining Sprint 2 backlog includes confidence calibration, out-of-distribution testing, statistics/streaks, frontend integration and deployment. History is merged; centralized errors and ONNX export are implemented in PRs #68/#69 pending review. Do not claim production persistence or new real-world model performance was verified.
+- Remaining Sprint 2 backlog includes confidence calibration, out-of-distribution testing, statistics/streaks, frontend integration and deployment. History and ONNX export are merged. Centralized errors in PR #68 await re-review after the requested fixes.
 
 ## New work and PRs from this session
 
