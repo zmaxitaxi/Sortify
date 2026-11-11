@@ -61,9 +61,9 @@ Local helpers and hooks live under `.git/sortify/` and `.git/hooks/`; only `cont
 5. Return to `feat/ml/max/domain-gap`, run `git sync-context`, and push that named branch to `origin` to back up context. Neither remote main is a push target.
 
 PRs #52, #53 and #69 are merged. PR #68 is awaiting re-review.
-Start each further task on a fresh branch from `upstream/main`; `git prepare-pr`
-exports the entire personal implementation diff, so do not combine the two
-outstanding work into another PR.
+Start each further task on a fresh branch from `upstream/main`. `git prepare-pr`
+exports the entire personal implementation diff, so inspect the included changes
+before publishing and keep each PR focused on its intended feature.
 
 The local post-merge hook refreshes the Git snapshot after successful merges on the personal branch; an ordinary merge may therefore leave `context.md` modified. `git sync-context` also refreshes GitHub metadata and commits the update. The pre-push hook blocks updates to `main`, blocks the personal branch going to the team repository, and blocks `context.md` on any other pushed branch. Hooks can be bypassed and GitHub UI operations do not run them: always inspect PR contents. Server-side enforcement would require team repository settings; none were changed.
 
