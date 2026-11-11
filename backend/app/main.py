@@ -18,15 +18,7 @@ app = FastAPI(
 )
 register_exception_handlers(app)
 
-# Configure CORS for Expo dev servers, mobile test devices, and local clients
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-# Added last so this timer wraps CORS and the routers.
+# Log routed requests and errors inside the outer CORS wrapper.
 app.add_middleware(TelemetryMiddleware)
 
 # Week 1 learning route stays at /upload-image, outside the /api prefix.
@@ -43,3 +35,14 @@ app.include_router(history.router, prefix="/api", tags=["History"])
 def health_check():
     """Service health check endpoint confirming server availability."""
     return {"status": "ok"}
+
+
+# Wrap the error handler too so unexpected failures carry CORS headers.
+fastapi_app = app
+app = CORSMiddleware(
+    fastapi_app,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -11,7 +11,7 @@ from google.cloud.firestore_v1 import Client, DocumentSnapshot
 from google.cloud.firestore_v1.document import DocumentReference
 from google.cloud.firestore_v1.query import Query
 
-from backend.app.main import app
+from backend.app.main import app, fastapi_app
 from backend.app.routers.history import get_history_service
 from backend.app.schemas.schemas import GuestScanRecord
 from backend.app.services.history_service import HistoryService, HistoryServiceError
@@ -37,10 +37,10 @@ def scan(index=1, user_id=DEVICE, **overrides):
 @pytest.fixture
 def client():
     service = HistoryService()
-    app.dependency_overrides[get_history_service] = lambda: service
+    fastapi_app.dependency_overrides[get_history_service] = lambda: service
     with TestClient(app) as client:
         yield client
-    app.dependency_overrides.pop(get_history_service)
+    fastapi_app.dependency_overrides.pop(get_history_service)
 
 
 def test_three_posts_two_pages_and_other_device_isolation(client):
@@ -183,7 +183,7 @@ def test_firestore_failure_never_silently_falls_back(client):
     with pytest.raises(HistoryServiceError):
         service.save_scan(scan())
     assert service._records == {}
-    app.dependency_overrides[get_history_service] = lambda: service
+    fastapi_app.dependency_overrides[get_history_service] = lambda: service
     response = client.get("/api/history", params={"user_id": str(DEVICE)})
     assert response.status_code == 503
     assert "private" not in response.text
