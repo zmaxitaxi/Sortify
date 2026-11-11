@@ -223,32 +223,32 @@ This narrative was reconstructed from the repositories, local checkout, commit h
 <!-- sortify-sync:start -->
 ## Automatic sync snapshot
 
-- Refreshed: `2026-11-08T14:56:51-08:00` (America/Los_Angeles).
+- Refreshed: `2026-11-10T20:07:24-08:00` (America/Los_Angeles).
 - Personal branch: `feat/ml/max/domain-gap`.
-- Team main: [`78d0ffca6776`](https://github.com/BoppingNoodles/Sortify/commit/78d0ffca6776895755c1fa949e17604ac4b7d977).
+- Team main: [`2e3fe3ccebab`](https://github.com/BoppingNoodles/Sortify/commit/2e3fe3ccebab86373112c3c889ee27832011d637).
 - Team main fully included in personal branch: **yes**.
 - Neither remote main is updated by this workflow.
 
 ### Recent team main commits
 
+- 2e3fe3c Merge pull request #69 from zmaxitaxi/feat/ml/max/onnx-export
+- 397ad1c fix(ml): export retrained v2 checkpoint
+- 2833fb3 docs(ml): record onnx parity results and artifact provenance
+- 0e8d1ed feat(ml): export verified dynamic batch onnx models
+- 9a9e707 chore(ml): install onnx tools for export verification
+- d02c80e chore(tooling): restore sprint issue ruff checks
 - 78d0ffc Merge pull request #57 from BoppingNoodles/feat/backend/david/municipal-rules-expansion
 - c639cfd fix(rules): sort test imports to satisfy ruff linter
 - 8d2b8b3 fix(test_rules.py): reformatted
 - 2d2ff36 fix(rules): edited Sunnyvale rules with city recycling guide
 - 04889e9 chore(issues): add sprint 2 issue templates and publishing script
 - 1990c32 test(rules): added parameterized tests for the five Bay Area cities
-- 543ca3c feat(rules): moved municipal rules into rules.json and added San Jose and Sunnyvale
-- 143be33 Merge pull request #55 from BoppingNoodles/feat/ml/kathleen-maung/model-retraining-v2
-- 0f5ce53 fix(ml): implement requested changes and retrain model
-- b25d095 feat(ml): Add v2 retraining script
-- 1339de6 Merge pull request #53 from zmaxitaxi/feat/backend/max/scan-history-service
-- 09f314e chore(backend): merge main into feat/backend/max/scan-history-service and reconcile config
 
-GitHub metadata fetched: `2026-11-08T14:56:51-08:00`.
+GitHub metadata fetched: `2026-11-10T20:07:24-08:00`.
 
 ### Max's PR status
 
-- [#69](https://github.com/BoppingNoodles/Sortify/pull/69) **OPEN** — feat(ml): export ONNX models with strict numerical parity
+- [#69](https://github.com/BoppingNoodles/Sortify/pull/69) **MERGED** — feat(ml): export ONNX models with strict numerical parity
 - [#68](https://github.com/BoppingNoodles/Sortify/pull/68) **OPEN** — feat(backend): centralize safe API errors and recovery
 - [#54](https://github.com/BoppingNoodles/Sortify/pull/54) **CLOSED** — Feat/ml/max/domain gap
 - [#53](https://github.com/BoppingNoodles/Sortify/pull/53) **MERGED** — feat(backend): persist guest scan history with cursor pagination
@@ -267,8 +267,9 @@ GitHub metadata fetched: `2026-11-08T14:56:51-08:00`.
 
 ### Open team PRs
 
+- [#72](https://github.com/BoppingNoodles/Sortify/pull/72) — [Frontend] Dynamic Waste Result Screen
+- [#71](https://github.com/BoppingNoodles/Sortify/pull/71) — feat(backend): implement eco-stats aggregation endpoint and streak ca…
 - [#70](https://github.com/BoppingNoodles/Sortify/pull/70) — Add item-specific disposal tips engine and matching
-- [#69](https://github.com/BoppingNoodles/Sortify/pull/69) — feat(ml): export ONNX models with strict numerical parity
 - [#68](https://github.com/BoppingNoodles/Sortify/pull/68) — feat(backend): centralize safe API errors and recovery
 - [#67](https://github.com/BoppingNoodles/Sortify/pull/67) — feat(camera): connect live scan to classification api
 - [#56](https://github.com/BoppingNoodles/Sortify/pull/56) — [Frontend] Add API Client Resilience and Scan Error Handling
@@ -276,14 +277,13 @@ GitHub metadata fetched: `2026-11-08T14:56:51-08:00`.
 ### Open tickets and owners
 
 - [#66](https://github.com/BoppingNoodles/Sortify/issues/66) — docs(ml): Out-of-Distribution & Non-Waste Robustness Testing (aarav-shah-08)
-- [#65](https://github.com/BoppingNoodles/Sortify/issues/65) — feat(ml): PyTorch to ONNX Export & Numerical Parity Verification (zmaxitaxi)
 - [#64](https://github.com/BoppingNoodles/Sortify/issues/64) — feat(ml): Empirical Confidence Threshold Calibration (kathleen-maung)
 - [#63](https://github.com/BoppingNoodles/Sortify/issues/63) — feat(backend): Centralized Exception Handling & Server Stability (zmaxitaxi)
 - [#62](https://github.com/BoppingNoodles/Sortify/issues/62) — feat(backend): Timezone-Aware Daily Active Streak Calculator (davidcontreras-ucb)
 - [#61](https://github.com/BoppingNoodles/Sortify/issues/61) — feat(backend): User Eco-Stats Aggregation Endpoint (GET /api/stats) (edward-zhou1)
 - [#60](https://github.com/BoppingNoodles/Sortify/issues/60) — feat(backend): Production Multi-Stage Dockerfile & Cloud Deployment (janicedeng)
 - [#59](https://github.com/BoppingNoodles/Sortify/issues/59) — feat(frontend): Local Storage Service Abstraction & Data Synchronization (unassigned)
-- [#58](https://github.com/BoppingNoodles/Sortify/issues/58) — feat(frontend): History Feed Screen & Stats / Streak Dashboard (unassigned)
+- [#58](https://github.com/BoppingNoodles/Sortify/issues/58) — feat(frontend): History Feed Screen & Stats / Streak Dashboard (edward-zhou1)
 - [#38](https://github.com/BoppingNoodles/Sortify/issues/38) — [Backend] Item-Specific Disposal Tips Engine & Item Matching (janicedeng)
 - [#37](https://github.com/BoppingNoodles/Sortify/issues/37) — [Frontend] API Client Resilience, Retries & Physical Device Testing (aarav-shah-08)
 - [#36](https://github.com/BoppingNoodles/Sortify/issues/36) — [Frontend] Dynamic Waste Result Modal & Bin Color Styling (vumongthanhmai98)
